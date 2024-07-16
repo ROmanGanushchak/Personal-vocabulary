@@ -30,12 +30,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework_simplejwt',
+    # 'rest_framework_simplejwt',
     'rest_framework',
     'accounts',
     'authentication',
     'dictionaries',
     'google_auth',
+    'translators',
     'corsheaders',
 ]
 
@@ -50,8 +51,19 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 CORS_ALLOWED_ORIGINS = [
-    'http://127.0.0.1:8000',
     'http://localhost:5173',
+]
+
+CORS_ALLOW_CREDENTIALS = True
+
+CORS_ALLOW_HEADERS = [
+    'authorization',
+    'content-type',
+    'x-requested-with',
+    'accept',
+    'origin',
+    'access-control-request-method',
+    'access-control-request-headers',
 ]
 
 BASIC_SENDER_EMAIL = "mails.sender.api@gmail.com"
@@ -59,7 +71,6 @@ BASIC_SENDER_PASSWORD = "hjtq pbgx mpec iuir"
 # WSGI_APPLICATION = 'google_login.wsgi.application'
 
 ROOT_URLCONF = 'backend.urls'
-
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -76,17 +87,22 @@ TEMPLATES = [
     },
 ]
 
-SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
-    'ROTATE_REFRESH_TOKENS': False,
-    'BLACKLIST_AFTER_ROTATION': True,
-}
+# SIMPLE_JWT = {
+#     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
+#     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+#     'ROTATE_REFRESH_TOKENS': False,
+#     'BLACKLIST_AFTER_ROTATION': True,
+#     'AUTH_COOKIE': 'refresh_token',  # Cookie name. Enables cookies if value is set.
+#     'AUTH_COOKIE_DOMAIN': None,     # A string like "example.com", or None for standard domain cookie.
+#     'AUTH_COOKIE_SECURE': False,    # Whether the auth cookies should be secure (https:// only).
+#     'AUTH_COOKIE_HTTP_ONLY' : True, # Http only cookie flag.It's not fetch by javascript.
+#     'AUTH_COOKIE_PATH': '/',        # The path of the auth cookie.
+#     'AUTH_COOKIE_SAMESITE': 'Lax',  # Whether to set the flag restricting cookie leaks on cross-site requests.
+# }
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )
+    'DEFAULT_AUTHENTICATION_CLASSES': [],
+    'DEFAULT_PERMISSION_CLASSES': [],
 }
 
 # WSGI_APPLICATION = 'backend.wsgi.application'
@@ -175,3 +191,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 GOOGLE_CLIENT_ID = env('GOOGLE_CLIENT_ID')
 GOOGLE_CLIENT_SECRET = env('GOOGLE_CLIENT_SECRET')
+
+DEEPL_AUTH_KEY = env('DEEPL_AUTH_KEY')

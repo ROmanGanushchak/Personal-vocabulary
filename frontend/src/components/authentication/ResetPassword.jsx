@@ -2,9 +2,10 @@ import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import '@styles/authentication/signup.css'
 import Button from 'react-bootstrap/Button';
-import api from '@api'
+import useApi from "../../hooks/auth/useApi";
 
 function ResetPassword() {
+    const { api } = useApi();
     const { token } = useParams();
     const navigate = useNavigate()
     const [password, setPassword] = useState()

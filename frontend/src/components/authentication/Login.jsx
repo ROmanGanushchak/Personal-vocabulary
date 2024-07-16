@@ -1,13 +1,16 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '@styles/authentication/signup.css'
-import api from "@api";
-import { useNavigate } from "react-router-dom";
 import Verification from './Verification'
+import useAuth from "../../hooks/auth/useAuth";
+import useApi from "../../hooks/auth/useApi";
+// import api from "@api"
 
 function Login() {
-    const navigate = useNavigate()
-    const [errorText, setErrorText] = useState('')
+    const { setAccess, navigateAfterAccessChange } = useAuth();
+    const {api} = useApi();
+    const [errorText, setErrorText] = useState('');
+    const isFirstRender = useRef(true);
     const [formData, setFormData] = useState({
         email: '',
         password: '',
@@ -19,6 +22,8 @@ function Login() {
     ];
 
     const submitDefault = () => {
+        console.log("navigateAfterAccessChange: " +  navigateAfterAccessChange)
+
         if (!(formData.email && formData.password)) {
             setErrorText("not all data are specified");
         } else if (formData.password.length < 6) {
@@ -30,13 +35,11 @@ function Login() {
             })
             .then((response) => {
                 if (response.status === 200) {
-                    localStorage.setItem('access', response.data['access']);
-                    localStorage.setItem('refresh', response.data['refresh']);
-                    navigate('/');
+                    navigateAfterAccessChange.current = "/";
+                    setAccess(response.data['access']);
                     if (errorText)
                         setErrorText('')
                 } else {
-                    console.log('login error')
                     setErrorText('Login error: ', response.data['details'])
                 }
             }).catch(error => {

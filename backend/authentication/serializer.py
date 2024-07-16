@@ -18,18 +18,3 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         )
 
         return user
-
-class LogoutSerializer(serializers.Serializer):
-    refresh_token = serializers.CharField()
-
-    def validate(self, attrs):
-        self.token = attrs.get('refresh_token')
-        return attrs
-    
-    def save(self, **kwards) -> bool:
-        try:
-            token = RefreshToken(self.token)
-            token.blacklist()
-            return True
-        except TokenError:
-            return False

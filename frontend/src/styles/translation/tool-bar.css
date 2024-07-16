@@ -1,0 +1,18 @@
+.conteiner {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    height: 75px;
+    background-color: #d7efef;
+    width: min-content;
+    min-width: 500px;
+    padding: 10px 10px;
+    border: 3px solid gainsboro;
+    border-radius: 15px;
+    margin: 0px 0px;
+}
+
+.img-btn {
+    background-color: transparent;
+    border: none;
+}

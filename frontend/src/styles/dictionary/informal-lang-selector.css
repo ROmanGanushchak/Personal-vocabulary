@@ -1,0 +1,13 @@
+.inform-selector-conteiner {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    background-color: azure;
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.1);
+    padding: 10px 10px;
+    min-width: 170px;
+    gap: 30px;
+}

@@ -1,0 +1,7 @@
+.conteiner {
+    display: flex;
+    flex-direction: column;
+    /* background-color: whitesmoke; */
+    background-color: transparent;
+    padding: 0 0;
+}

@@ -5,6 +5,9 @@ from google.oauth2 import id_token
 from google.auth.exceptions import GoogleAuthError
 from google.auth.transport import requests
 from rest_framework_simplejwt.tokens import RefreshToken, Token
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.permissions import AllowAny
+from authentication.views import provideUserTokens
 
 from backend import settings
 from accounts.models import User, AuthProviders    
@@ -31,7 +34,7 @@ class GoogleSignInView(APIView):
 
         try:
             user: User = get_or_create_socialuser(AuthProviders.Google, email, first_name, last_name)
-            token: Token = RefreshToken.for_user(user)
-            return Response({'access': str(token.access_token), 'refresh': str(token), 'email': email, 'name': first_name})
+            print("User found")
+            return provideUserTokens(user)
         except UncorrectAuthProvider:
             return Response({'detail': "This email is taken by a user with different authentication type"}, status=status.HTTP_404_NOT_FOUND)

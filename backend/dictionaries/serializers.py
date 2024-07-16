@@ -6,7 +6,6 @@ class WordPairSerializer(serializers.ModelSerializer):
     class Meta(object):
         model = WordPair
         fields = ['native_word', 'learned_word']
-        
     
     def create(self, validated_data):
         dictionary = get_object_or_404(Dictionary, type=self.context.get("language_type"))
@@ -18,7 +17,9 @@ class WordPairSerializer(serializers.ModelSerializer):
 
         return instance
 
+
 class DictionarySerializer(serializers.ModelSerializer):
     class Meta(object):
         model = Dictionary
-        fields = ['id', 'learned_language']
+        fields = ['language', 'is_default', 'name', 'date_created', 'words_count']
+        read_only_fields = tuple('words_count')

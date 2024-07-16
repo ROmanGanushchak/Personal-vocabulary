@@ -1,27 +1,24 @@
 import React, { useState } from "react";
 import '@styles/authentication/signup.css'
-import api from '@api_un'
-import { useNavigate } from "react-router-dom";
 import Button from 'react-bootstrap/Button';
+import useApi from "../../hooks/auth/useApi";
 
 function ResetPasswordEmail() {
-    const navigate = useNavigate()
+    const api = useApi();
     const [email, setEmail] = useState("")
     const [errorText, setErrorText] = useState("")
 
     const sendEmail = () => {
         api.post('auth/password/request_change/', {'email': email}).then(response => {
-            console.log(response.status)
             if (response.status === 200) 
-                // navigate('/')
-                setErrorText('email was sent')
+                setErrorText('email was sent');
             else 
-                setErrorText(response.data['detail'])
+                setErrorText(response.data['detail']);
         }).catch(error => {
             if (error.status)
-                setErrorText(error.response.data['detail'])
+                setErrorText(error.response.data['detail']);
             else 
-                setErrorText(error.message)
+                setErrorText(error.message);
         })
     }
 

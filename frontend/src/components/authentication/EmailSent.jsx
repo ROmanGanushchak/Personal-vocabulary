@@ -1,21 +1,20 @@
 import React, { useState } from "react";
 import '@styles/authentication/email.css'
 import { Button } from "react-bootstrap";
-import api from '@api'
-import { useNavigate } from "react-router-dom";
+import useAuth from "../../hooks/auth/useAuth";
 
 function EmailSent() {
-    const navigate = useNavigate()
-    const [code, setCode] = useState('')
-    const [errorText, setErrorText] = useState('')
+    const { api } = useApi();
+    const { setAccess, navigateAfterAccessChange } = useAuth();
+    const [code, setCode] = useState('');
+    const [errorText, setErrorText] = useState('');
 
     const sendCode = () => {
         api.post(`auth/approve/${parseInt(code)}/`).then(responce => {
-            localStorage.setItem('access', responce.data['access'])
-            localStorage.setItem('refresh', responce.data['refresh'])
-            navigate('/')
-            setErrorText('')
-            console.log('responve allright')
+            navigateAfterAccessChange.current = '/';
+            setAccess(responce.data['access']);
+            if (errorText)
+                setErrorText('')
         }).catch(error => {
             setErrorText('Uncorrect code or it has expired')
         });

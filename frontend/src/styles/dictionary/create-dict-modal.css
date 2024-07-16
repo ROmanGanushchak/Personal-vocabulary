@@ -1,0 +1,51 @@
+.input-field-conteiner {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: min-content;
+    padding: 10px 10px;
+}
+
+.input-field-conteiner input {
+    font-size: 20px;
+    margin: 0px;
+}
+
+.lang-settings-conteiner {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.language-selector-conteiner {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: space-between;
+    width: 100%;
+    height: min-content;
+    padding: 10px 10px;
+}
+
+.checkbox-field-conteiner {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    width: 100%;
+    height: min-content;
+    padding: 10px 10px;
+}
+.checkbox-field-conteiner input {
+    margin: 0 0;
+    width: 35px;
+}
+
+p {
+    font-size: 20px;
+    margin: 0px;
+}
+
+.error-text {
+    align-self: center;
+    width: 100%;
+}

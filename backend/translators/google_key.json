@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "vocabulary-426510",
+  "private_key_id": "569eab769b3fa755f8c8f631bd6be21481ed1fcd",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDY7EzI535awBbs\n24MXdxbid4hMKtMNRoknDPCCAb67qsiAcSka9KUs+SZ1pWLi7jkgLji7x3pvPah3\nvvvtT1kxgN6NqKNioEEmOnxFPV1tR72utlcjM1MppFXeM6edBdB/BF2pYZRuS7Xh\nYBcHOpV7pCrUQCbM5Fq1O/kxdb6sLZ/iIB7IR0Ck/uO1diwox51SOMqrm7bZVHdx\nG5ZtHLAPXz0wIDnwYd7H5ikGop0SsH+ANdlLXIXM2PZatJz5VlbB3FhvHeRGgXvB\nu9Zf/U8eLG8m/Dvd2RufzcXP87eycungmfnITuPLaGtLcnvOHYeOuv2GYKaU53bC\n/rPetanlAgMBAAECggEAIWg65xHnvrgoj6+6v6lih9wazIgn2rqLMs1mWM9F/Ybu\nvAExcGpO6d8xEhs3YHWJrLARorG05F7djBuIluKKfPo4zB41k2HUxrtpGgy6T7Ml\nvjtsrgoge6BIbSENZjxYAMe+WPCjOF1GlIAE6+MU1GbTBb8fepyMb67d0MUuaTuQ\n8qXU75krxFzix2j7CMxUe0DQMMEVl7fQGFb0GUHR2hAEfW661OfqfOjdbuiJC9TF\ntDHbnpQ3eXUvOWYVogGpCpFuMe8PxKH9/ox++jnegKa/yMRiS4W9Oy51j5KhcgYH\n2kHPmjmYhIv62yDUHxfzbKZn0BTWaY/Y1MQbxzSpvQKBgQDxBK19RW0UtoekG6W0\nBoMJkHJQ5m9bVKHhvn1PWx4feZ2QQvfAKIfqrFW+qf8F+15AUTpQoiMSHZhtmhfe\nUtN+AHknt8Qv6NaaAK1ow1rXTI7VsqCmJDxctvv73kE6cDWa1bry6Dhko1tL5Np0\nGMMS0f2jxlVBEFHdoN6YB1AfRwKBgQDmaDHwBwwashunsAoV1AKmFJTnJrd4ijd4\n2tgyuRHjtMe5N3GremvQBNqywb29447HAlpTAT33ITJDI3LKq7QNR1lHaGkoqwi9\nEFuFkAhWUzHKeGLp3DVEMytoI6jgNoJaX3gT1eLwH+WR3cMxiSrPHqZB68F5FsBN\nJvi0WQv7cwKBgG1y41ns6iEq1qP2jiQXhPAV8WO9kToXT8AU4hDkXuSKNLwrPRi9\nDyPJiNKhnhbYVK++c03koyp52BuFi2tBj5s7mckokWX0RWgAAL9/X0RAFukCSiPI\ndsTfr8Rr5JEmHaGnh1MBk4JYEICBd5abHBLy20zBJzv5rkOH5y2AvKjHAoGBALf0\nUIp21e8qbHIBVsv+rO60V/4FJ06R66AN+bblk6bdWuhBn/tsjk9S0NkPXdIRsJir\nBDppL3PziRGZZ7jwRZykbl9YuTzC8QMh4DBOwplJauNgInjcW5rLz8ghUF9SpdhJ\niLEtfzaAAOXozELsZMVgjxTqiVmIFJiEmOREhBCJAoGBAOh3VLH7ZqZvku47g4aH\nfxf1QSB9CLUmNxUHXpQDLxoLhvwOgvMn7127DJXTqk+aJvtFxg2Z25LIh9zSIKKj\n6tZGni/T4ypQ0yjMQ55DBh91jRz0PYoDUZ3yaAy7yJ5JF6NHTo1Ovwkrk8KBSdZZ\nnL2yFlGAKURI99EJHnkhQpT5\n-----END PRIVATE KEY-----\n",
+  "client_email": "vocabulary-translate@vocabulary-426510.iam.gserviceaccount.com",
+  "client_id": "103482974907795480680",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/vocabulary-translate%40vocabulary-426510.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

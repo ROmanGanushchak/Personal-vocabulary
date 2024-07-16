@@ -1,0 +1,34 @@
+.base-conteiner {
+    margin-top: 100px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    justify-content: center;
+    align-items: center;
+}
+
+.extra-conteiner {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    align-items:center;
+}
+
+.inputs-conteiner {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    align-items:baseline;
+}
+
+.list-to-add {
+    margin: 50px 50px;
+    display: flex;
+    flex-direction: column;
+}
+
+.list-to-add .p {
+    margin: 20px 20px;
+    font-size: 30px;
+    font-weight: bold;
+}

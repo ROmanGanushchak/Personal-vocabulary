@@ -1,12 +1,12 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Button from 'react-bootstrap/Button';
 import '@styles/authentication/signup.css'
 import api from '@api_un'
-import { useNavigate } from "react-router-dom";
+import AuthContext from '../../context/auth/useAuthContext.jsx'
 
 function Verification({title, setFormData, formOutline, submitDefault, errorText, setErrorText}) {
-    const navigate = useNavigate()
+    const { setAccess, navigateAfterAccessChange} = useContext(AuthContext);
     const handleInputChange = (e, key) => {
         setFormData(prevState => ({
             ...prevState,
@@ -15,17 +15,14 @@ function Verification({title, setFormData, formOutline, submitDefault, errorText
     };
 
     const handleSignInWithGoogle = async (response) => {
-        setErrorText('something')
         const credentials = response.credential
         await api.post('social_auth/google/', {"access_token": credentials}).then(response => {
-            if (response.status === 200)
-                console.log('works')
-            else {
-                console.log('set error text')
+            if (response.status === 200) {
+                navigateAfterAccessChange.current = '/';
+                setAccess(response.data['access']);
+            } else {
                 setErrorText('error')
             }
-                // setErrorText(response.data['detail'])
-            console.log(response)
         }).catch(error => console.log(error))
     }
 
@@ -37,7 +34,7 @@ function Verification({title, setFormData, formOutline, submitDefault, errorText
 
         google.accounts.id.renderButton(
             document.getElementById('signInDiv'),
-            {theme:"outline", text:"google is working"}
+            {theme:"outline", text:`${title} with google`}
         )
     }, [])
 

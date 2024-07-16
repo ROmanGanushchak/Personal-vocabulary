@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '@styles/authentication/signup.css'
-import api from "@api";
 import { useNavigate } from "react-router-dom";
 import Verification from "./Verification";
+import useAuth from "../../hooks/auth/useAuth";
+import useApi from "../../hooks/auth/useApi";
 
 function Signup() {
+    const {api} = useApi();
+    const { setAccess } = useAuth();
     const navigate = useNavigate()
     const [errorText, setErrorText] = useState('')
     const [formData, setFormData] = useState({
@@ -32,8 +35,7 @@ function Signup() {
         } else if (formData.password.length < 6) {
             setErrorText("Password has to have at least 6 characters");
         } else {
-            localStorage.removeItem('access')
-            localStorage.removeItem('refresh')
+            setAccess("");
             api.post('auth/register/', {
                 'email': formData.email, 
                 'first_name': formData.firstName,
@@ -45,7 +47,7 @@ function Signup() {
                     setErrorText(response.status)
                 
                 console.log(response.data);
-                navigate('/email-sent')
+                navigate('/email-sent');
             });
         }
     };

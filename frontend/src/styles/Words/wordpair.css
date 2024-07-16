@@ -1,0 +1,30 @@
+.words-container {
+    width: 100%;
+    height: min-content;
+    border: none;
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+    border-radius: 20px;
+    background-color: aliceblue;
+}
+
+.word-conteiner-header {
+    background-color: burlywood;
+}
+
+.word {
+    color: black;
+    padding: 10px 0;
+    text-align: center;
+    margin-right: 1px;
+    font-size: 20px;
+}
+
+.word-header {
+    font-size: 30px;
+    font-weight: bold;
+}
+
+.right-border {
+    border-right: 1px solid black;
+}

@@ -1,14 +1,15 @@
 import React from "react";
-import api from '@api'
 import { Button } from "react-bootstrap";
+import useAuth from "../../hooks/auth/useAuth";
+import useApi from "../../hooks/auth/useApi";
 
 function logout() {
-    refresh = localStorage.getItem('refresh')   
-    if (refresh != null) {
-        localStorage.removeItem('refresh')
-        localStorage.removeItem('access')
-        api.post('auth/logout/', {'refresh_token': refresh})
-    }
+    const { setAccess, navigateAfterAccessChange } = useAuth();
+    const { api } = useApi();
+
+    navigateAfterAccessChange.current = "/";
+    setAccess("");
+    api.post('auth/logout/', {'refresh_token': "refresh_token"})
 }
 
 function LogOutBtn() {

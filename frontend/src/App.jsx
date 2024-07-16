@@ -5,20 +5,33 @@ import Login from './components/authentication/Login'
 import ResetPassword from './components/authentication/ResetPassword'
 import ResetPasswordEmail from './components/authentication/ResetPasswordEmail'
 import LogOutBtn from './components/authentication/LogOutBtn'
+import TranslateMenu from './components/Tranlations/TranslateMenu'
+import { AuthProvider } from './context/auth/useAuthContext'
+import { ApiProvider } from './context/auth/useApiContext'
+import GuardedComponent from './components/GuardedComponent'
+import DictList from './components/dicttionary/DictList'
 
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path='/logout' element={<LogOutBtn />}/>
-        <Route path='/signup' element={<Signup />}/>
-        <Route path='/email-sent' element={<EmailSent />}/>
-        <Route path='/login' element={<Login />}/>
-        <Route path='/password/reset/:token' element={<ResetPassword />}/>
-        <Route path='/password/reset/get_email' element={<ResetPasswordEmail />}/>
-      </Routes>
+      <AuthProvider children={
+        <ApiProvider children={
+          <Routes>
+            <Route path='/logout' element={<LogOutBtn />}/>
+            <Route path='/signup' element={<Signup />}/>
+            <Route path='/email-sent' element={<EmailSent />}/>
+            <Route path='/login' element={<Login />}/>
+            <Route path='/password/reset/:token' element={<ResetPassword />}/>
+            <Route path='/password/reset/get_email' element={<ResetPasswordEmail />}/>
+            <Route element={<GuardedComponent />}>
+              <Route path='/' element={<TranslateMenu />}/>
+              <Route path='/dictionaries' element={<DictList />}/>
+            </Route> 
+          </Routes>
+        }></ApiProvider>
+      } />
     </BrowserRouter>
   )
-}
+};
 
-export default App
+export default App;
