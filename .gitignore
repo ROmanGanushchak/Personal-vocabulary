@@ -3,3 +3,4 @@
 __pycache__/
 migrations/
 .env
+google_key.json
