@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Button from 'react-bootstrap/Button';
 import '@styles/authentication/signup.css'
 import api from "@api";
 import { useNavigate } from "react-router-dom";
@@ -50,7 +49,7 @@ function Login() {
     };
 
     return (
-        <Verification title="Login" setFormData={setFormData} formOutline={formOutline} submitDefault={submitDefault} errorText={errorText}/>
+        <Verification title="Login" setFormData={setFormData} formOutline={formOutline} submitDefault={submitDefault} errorText={errorText} setErrorText={setErrorText}/>
     );
 }
 

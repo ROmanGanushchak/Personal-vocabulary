@@ -19,6 +19,7 @@ def get_or_create_socialuser(auth_provider: AuthProviders, email, first_name, la
         return user
     except ObjectDoesNotExist:
         user: User = User.objects.create_user(email, first_name, last_name, createRandomPassword())
-        user.auth_provider = auth_provider.value
+        user.auth_provider = int(auth_provider.value)
+        user.is_verified = True
         user.save()
         return user

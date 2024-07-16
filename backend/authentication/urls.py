@@ -9,6 +9,5 @@ urlpatterns = [
     path('approve/<int:varification_code>/', views.VerificationAwaitView.as_view(), name="account verification"),
     path('password/request_change/', views.PasswordChangeRequestView.as_view(), name="request password change"),
     path('password/change/', views.PasswordChangeValidatorView.as_view(), name='change password'),
-    path('social/', include('allauth.urls')),
-    path('social/', include('allauth.socialaccount.urls')),
+    path('logout/', views.Logout.as_view(), name='logout'),
 ]

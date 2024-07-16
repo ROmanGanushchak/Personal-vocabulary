@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Button from 'react-bootstrap/Button';
 import '@styles/authentication/signup.css'
 import api from '@api_un'
+import { useNavigate } from "react-router-dom";
 
-function Verification({title, setFormData, formOutline, submitDefault, errorText}) {
+function Verification({title, setFormData, formOutline, submitDefault, errorText, setErrorText}) {
+    const navigate = useNavigate()
     const handleInputChange = (e, key) => {
         setFormData(prevState => ({
             ...prevState,
@@ -13,9 +15,18 @@ function Verification({title, setFormData, formOutline, submitDefault, errorText
     };
 
     const handleSignInWithGoogle = async (response) => {
+        setErrorText('something')
         const credentials = response.credential
-        const server_res = await api.post('social_auth/google/', {"access_token": credentials})
-        console.log(server_res)
+        await api.post('social_auth/google/', {"access_token": credentials}).then(response => {
+            if (response.status === 200)
+                console.log('works')
+            else {
+                console.log('set error text')
+                setErrorText('error')
+            }
+                // setErrorText(response.data['detail'])
+            console.log(response)
+        }).catch(error => console.log(error))
     }
 
     useEffect(() => {
@@ -28,7 +39,7 @@ function Verification({title, setFormData, formOutline, submitDefault, errorText
             document.getElementById('signInDiv'),
             {theme:"outline", text:"google is working"}
         )
-    })
+    }, [])
 
     return (
         <div className="container">
@@ -48,11 +59,7 @@ function Verification({title, setFormData, formOutline, submitDefault, errorText
 
             <label className="or-separator"> OR </label>
 
-            <div>
-                <Button variant="primary">Google</Button>{' '}
-            </div>    
-
-            <div className="">
+            <div className="social-auth-conteiner">
                 <div id="signInDiv" className='gsignIn'></div>    
             </div>  
         </div>

@@ -45,13 +45,20 @@ function Signup() {
                     setErrorText(response.status)
                 
                 console.log(response.data);
-                navigate('email-sent')
+                navigate('/email-sent')
             });
         }
     };
 
     return (
-        <Verification title="Signup" setFormData={setFormData} formOutline={formOutline} submitDefault={submitDefault} errorText={errorText}/>
+        <Verification 
+            title="Signup" 
+            setFormData={setFormData} 
+            formOutline={formOutline} 
+            submitDefault={submitDefault} 
+            errorText={errorText} 
+            setErrorText={setErrorText}
+        />
     );
 }
 

@@ -59,3 +59,10 @@ input {
     margin-top: 2px;
     color: red;
 }
+
+.social-auth-conteiner {
+    margin: 0 5px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
