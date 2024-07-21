@@ -1,18 +1,20 @@
 import Modal from 'react-bootstrap/Modal';
 import Button from "react-bootstrap/esm/Button";
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import InformalLangSelector from './InformalLangSelector';
-import useApi from '../../hooks/auth/useApi';
+import useApi from '../../../hooks/auth/useApi';
 import { WorkStates } from './DictList';
+import DictionaryContext from '../../../context/useDictionary';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
-import '@styles/dictionary/create-dict-modal.css';
+import '@styles/dictionary/list/create-dict-modal.css';
 
-function CreateDictModal( {workState, setWorkState, submitRezults} ) {
+function CreateDictModal( {workState, setWorkState} ) {
     const [lang, setLang] = useState(null);
     const [name, setName] = useState('');
     const [isDefault, setIsDefault] = useState(false);
     const [errorText, setErrorText] = useState('');
+    const {addNewDictionaty} = useContext(DictionaryContext);
     const {api} = useApi();
 
     function trySubmit() {
@@ -25,8 +27,8 @@ function CreateDictModal( {workState, setWorkState, submitRezults} ) {
             .then(response => {
                 if (errorText)
                     setErrorText('');
-                setWorkState(WorkStates.Default)
-                submitRezults(name, lang, isDefault, response.data['date_created'], response.data['words_count']);
+                setWorkState(WorkStates.Default);
+                addNewDictionaty(name, lang, isDefault, response.data['date_created'], response.data['words_count']);
             }).catch(error => {
                 console.log(`In CreateDictModal error ${error}`);
             });

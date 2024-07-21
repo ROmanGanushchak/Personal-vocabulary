@@ -4,20 +4,18 @@ from rest_framework import status
 
 from .serializer import TranslateSerializer
 from .serializer import translators
-from .translate import Translator, TranslationError
-from authentication.decorators import authorized
+from .translate import Translator, TranslationError, GoogleTranslator
+from authentication.decorators import authorized, extract_inputs
+from .audio import get_audio
 
 class TranslatorView(APIView):
     @authorized
     def post(self, request):
-        print("In Translate func")
         serializer = TranslateSerializer(data=request.data)
         if (serializer.is_valid()):
-            print("In if")
             data = serializer.validated_data
             translator: Translator = translators[data.get('translator')]
             try:
-                print("Try to translate")
                 translatedText, lang = translator.translateText(
                     data.get("text"), 
                     translator.target_lang_to_code(data.get("targetLang")),
@@ -28,3 +26,20 @@ class TranslatorView(APIView):
                 print(e)
                 return Response({'detail': str(e)}, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class GetAudoView(APIView):
+    @authorized
+    @extract_inputs(['text', 'lang'])
+    def post(self, request, text, lang_name):
+        print("In audio")
+        try:
+            lang_code = GoogleTranslator.source_lang_to_code(lang_name)
+        except Exception:
+            return Response({'detail' : "This language is not supported"}, status=status.HTTP_400_NOT_FOUND)
+        
+        try:
+            print("Trying to translate")
+            return get_audio(text, lang_code)
+        except Exception:
+            return Response({'detail' : "Error while getting speach from api"}, status=status.HTTP_400_NOT_FOUND)

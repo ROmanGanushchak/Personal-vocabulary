@@ -16,7 +16,6 @@ function TextInOutField( {type, text, setText, lang, changeLanguage, langsVarian
 
     function updateLangView(language) {
         const indexInArray = languagesVariants.indexOf(language);
-        console.log(`${(type ? "input" : "output")} Lang updated to ${lang}`);
         if (indexInArray !== -1) {
             setActivaLanguageIndex(indexInArray);
         } else if (languagesVariants.length === maxLanguagesChached) {
@@ -38,7 +37,6 @@ function TextInOutField( {type, text, setText, lang, changeLanguage, langsVarian
     useEffect(() => {
         if (lang != languagesVariants[activeLanguageIndex]) 
             updateLangView(lang);
-        console.log(`In useEffect ${(type ? "input" : "output")}, ${languagesVariants[activeLanguageIndex]}`)
     }, [lang]);
 
     useEffect(() => {

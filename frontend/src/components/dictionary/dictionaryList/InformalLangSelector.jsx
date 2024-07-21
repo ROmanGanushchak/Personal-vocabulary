@@ -1,5 +1,5 @@
-import LangSelector from "../Tranlations/LangSelector";
-import '@styles/dictionary/informal-lang-selector.css';
+import LangSelector from "../../Tranlations/LangSelector";
+import '@styles/dictionary/list/informal-lang-selector.css';
 
 function InformalLangSelector( {lang, setLang, placeHolder='Undefined'} ) {
     return (

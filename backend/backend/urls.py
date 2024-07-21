@@ -9,5 +9,5 @@ urlpatterns = [
     path('social_auth/', include("google_auth.urls")),
     path('connection/check/', ConnectionChecker.as_view(), name='connection checker'),
     path('dictionary/', include('dictionaries.urls')),
-    path('translate/', TranslatorView.as_view(), name="translator"),
+    path('translate/', include('translators.urls'), name="translator"),
 ]

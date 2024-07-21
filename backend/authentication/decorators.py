@@ -1,4 +1,5 @@
 from functools import wraps
+from typing import List
 from django.core.exceptions import ValidationError
 from .models import UserTokens
 from accounts.models import User
@@ -34,3 +35,19 @@ def authorized(original_function):
         request.user = user
         return original_function(self, request, *args, **kwargs)
     return wrapper_function
+
+def extract_inputs(arg_names: List['str']):
+    def decorator_function(original_function):
+        @wraps(original_function)
+        def wrapper_function(self, request: HttpRequest, *args, **kwargs):
+            print(request.data)
+            aditional_args = []
+            for arg_name in arg_names:
+                try:
+                    aditional_args.append(request.data[arg_name])
+                except KeyError:
+                    return Response({'detail': f'The nececery argument {arg_name} was not provided'}, status=status.HTTP_400_BAD_REQUEST)
+            
+            return original_function(self, request, *aditional_args, *args, **kwargs)
+        return wrapper_function
+    return decorator_function

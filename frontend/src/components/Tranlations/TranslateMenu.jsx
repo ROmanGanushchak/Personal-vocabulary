@@ -48,7 +48,6 @@ function TranslateMenu() {
             setIsLoading(false);
             setOutput(response.data['translated']);
             setDetectedLang(response.data['lang'] ? response.data['lang'] : null);
-            console.log(response);
         }).catch(error => {
             console.log("In local catch");
             console.log(error);
@@ -98,6 +97,9 @@ function TranslateMenu() {
                     <p> Add nav bar for dicts </p>
                     <p> Saving words to dicts </p>
                     <p> Dict view </p>
+                    <p> Blure translations if not pointed </p>
+                    <p> Add all words from one list to the other </p>
+                    
                     
                     <p style={{fontWeight: 'bold'}}> Uneccerly: </p>
                     <p> Api to check spell correctness </p>

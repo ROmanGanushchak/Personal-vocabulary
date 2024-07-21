@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Button, Modal } from "react-bootstrap";
-import useApi from "../../hooks/auth/useApi";
+import useApi from "../../../hooks/auth/useApi";
 import DeleteVocabularyApproval from "./DeleteVocabularyApproval";
+import DictionaryContext from "../../../context/useDictionary";
 
-import '@styles/dictionary/create-dict-modal.css';
-import '@styles/dictionary/settings-dict-modal.css';
+import '@styles/dictionary/list/create-dict-modal.css';
+import '@styles/dictionary/list/settings-dict-modal.css';
 /** dict:
  *  name
     language
@@ -12,60 +13,50 @@ import '@styles/dictionary/settings-dict-modal.css';
     wordsCounr
     logo
  */
-function SettingsDictModal( {dict, submitChanges} ) { // dict - all dict data, type of dict from DictList.jsx
+function SettingsDictModal( {dict, informFinish} ) { // dict - all dict data, type of dict from DictList.jsx
     const [name, setName] = useState(dict?.name || "Data werent loaded");
     const [isDefault, setIsDefault] = useState(dict?.isDefault || false);
     const [isDeleteActive, setIsDeleteActive] = useState(false);
     const [errorText, setErrorText] = useState('');
-    const { api } = useApi();
+    const {updateDictionary, deleteDictionary} = useContext(DictionaryContext);
 
     useEffect(() => {
         setName(dict?.name);
         setIsDefault(dict?.isDefault);
     }, [dict]);
 
-    function trySubmit() {
+    async function trySubmit() {
         if (errorText)
             setErrorText('');
 
-        if (dict.name === name && dict.isDefault === isDefault)
-            submitChanges(dict, dict);
-        else {
-            api.post(`dictionary/update/${dict?.name || name}/`, {
-                name: name,
-                is_default: isDefault
-            }).then(response => {
-                console.log("In response -> " + response)
-                let newDict = null;
-                Object.assign(dict, newDict);
-                submitChanges(dict, newDict);
-            }).catch(error => {
-                console.log("In erorr -> " + error);
-                if (error.response && error.response.data['detail']) 
-                    setErrorText(error.response.data['detail']);
-            });
-        }
+        try {
+            await updateDictionary(dict, name, isDefault);
+            informFinish();
+        } catch(error) {
+            if (error.response && error.response.data['detail']) 
+                setErrorText(error.response.data['detail']);
+            else 
+                setErrorText("Unknown error");
+        };
     };
 
-    function deleteDict() {
-        console.log("Sending request to remove dict");
-        api.post(`dictionary/delete/${dict?.name}/`)
-        .then(() => {
-            console.log("Dictionary was removed")
-        }).catch(error => {
+    async function deleteDict() {
+        try {
+            await deleteDictionary(dict);
+            informFinish();
+        } catch(error) {
             if (error.response && error.response.data['detail'])
                 setErrorText(error.response.data['detail']);
             else if (error.response)
                 setErrorText(error.message);
             else
                 setErrorText('Unknown error');
-        }); 
-        submitChanges(dict, dict);
+        }
     };
     
     return dict && <Modal
         show={String(Boolean(dict))}
-        onHide={() => {setErrorText(''); submitChanges(dict, dict);}}
+        onHide={() => {setErrorText(''); informFinish();}}
         backdrop="static"
         aria-labelledby="contained-modal-title-vcenter"
         centered>

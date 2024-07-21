@@ -46,7 +46,6 @@ function Signup() {
                 if (!response.ok) 
                     setErrorText(response.status)
                 
-                console.log(response.data);
                 navigate('/email-sent');
             });
         }

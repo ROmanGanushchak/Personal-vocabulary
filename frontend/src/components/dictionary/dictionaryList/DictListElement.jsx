@@ -1,7 +1,8 @@
-import '@styles/dictionary/dict-list-element.css'
 import { useNavigate } from 'react-router-dom';
 import settingsIcon from '@logos/settings-icon.svg';
 import googleLogo from '@logos/google-logo.png';
+
+import '@styles/dictionary/list/dict-list-element.css'
 
 function DictListElement( {dictData, callSettings} ) {
     const navigate = useNavigate();

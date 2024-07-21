@@ -7,50 +7,29 @@ from rest_framework.permissions import IsAuthenticated
 from django.shortcuts       import get_object_or_404
 from django.core.exceptions import ObjectDoesNotExist
 
-from .models                    import WordPair, Dictionary, DictionaryGroup
-from .serializers               import WordPairSerializer, DictionarySerializer
+from ..models                    import WordPair, Dictionary, DictionaryGroup
+from ..serializers               import WordPairSerializer, DictionarySerializer
 from authentication.decorators  import authorized
+from accounts.models            import UserProfile
 
 
-class WordPairCreateView(APIView):
+class GetLastWordPairIndex(APIView):
     @authorized
-    def post(self, request, name: str, by_lang: int, ignore_copy: int) -> Response:
+    def post(self, request, name):
+        user: UserProfile = request.user.profile
         try:
-            native_word = request.data['native_word']
-            learned_word = request.data['learned_word']
-        except KeyError:
-            return Response({'detail': 'Not all data were specified'}, status=status.HTTP_400_BAD_REQUEST)
-
-        try:
-            dictionary = Dictionary.get(request.user.profile, name, by_lang)
-        except Exception:
-            return Response({'detail': 'Dictionary of this type was not created'}, status=status.HTTP_404_NOT_FOUND)
-
-        words = dictionary.add_word_pair(ignore_copy, native_word, learned_word)
-        if (words is not None):
-            serializer = WordPairSerializer(instance=words, many=True)
-            return Response({'copys': serializer.data})
-        return Response({'message': 'data added'})
-
-
-class WordPairGetView(APIView):
-    @authorized
-    def get(self, request, name: str, by_lang: int) -> Response: # start
-        try:
-            start: int = request.data['start']
-            dictionary = Dictionary.get(request.user.profile, name, by_lang)
+            dictionary: Dictionary = Dictionary.get(user, name, False)
         except ObjectDoesNotExist:
-            return Response({"details": "no such dictinary created"}, status=status.HTTP_400_BAD_REQUEST)
-        except KeyError:
-            return Response({"details": "no start field sended"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'detail': 'No dictionary found with specified name'}, status=status.HTTP_404_NOT_FOUND)
         
-        pairs = dictionary.words.order_by("-adding_time")
-        if (start >= len(pairs) or start < 0):
-            return Response({"details": "uncorect index of word_pair"}, status=status.HTTP_400_BAD_REQUEST) 
+        try:
+            count = request.data['count']
+        except KeyError:
+            count = user.words_per_page
+        print(f"Count -> {count}, words in dict -> ${dictionary.words_count}")
 
-        words = pairs[start : min(len(pairs), start+request.user.profile.words_per_page)]
-        serializer = WordPairSerializer(words, many=True)
-        return Response({"words": serializer.data})
+        rezult: int = min(int((dictionary.words_count-1) / count) * count, dictionary.words_count-1)
+        return Response(rezult)
 
 
 class DictionaryCreateView(APIView):
@@ -111,6 +90,7 @@ class DictionaryUpdateView(APIView):
             return Response({'detail': str(e)}, status=status.HTTP_400_BAD_REQUEST)
         serializer = DictionarySerializer(instance=dictionary)
         return Response(serializer.data)
+
 
 class DictionaryDelete(APIView):
     @authorized

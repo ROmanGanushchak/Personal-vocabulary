@@ -1,11 +1,14 @@
-import { useEffect, useState } from "react";
-import useApi from "../../hooks/auth/useApi";
+import { useContext, useEffect, useState } from "react";
+import useApi from "../../../hooks/auth/useApi";
 import DictListElement from "./DictListElement";
-import '@styles/dictionary/dict-list.css'
 import CreateDictModal from './CreateDictModal';
 import SettingsDictModal from "./SettingsDictModal";
 import DeleteVocabularyApproval from "./DeleteVocabularyApproval";
 import { Button } from "react-bootstrap";
+import DictionaryContext from "../../../context/useDictionary";
+import DictionaryMenu from "../DictionaryMenu";
+
+import '@styles/dictionary/list/dict-list.css'
 
 export const WorkStates = {
     Default: 0,
@@ -14,31 +17,10 @@ export const WorkStates = {
 }
 
 function DictList() {
-    const { api } = useApi();
-    const [dicts, setDicts] = useState([]);
+    const {dicts} = useContext(DictionaryContext);
     const [workState, setWorkState] = useState(WorkStates.Default);
     const [settingsDict, setSettingsDict] = useState(null);
     const dictsInRow = 3;
-
-    useEffect(() => {
-        api.get("dictionary/get/a/2/")
-        .then(response => {
-            const dictsResponse = response.data['dicts'];
-            console.log(response);
-            const dicts = [];
-            for (const dict of dictsResponse) 
-                dicts.push({
-                    lang: dict['language'], 
-                    dateCreated: dict['date_created'], 
-                    name: dict['name'], 
-                    isDefault: dict['is_default'],
-                    wordsCount: dict['words_count']
-                });
-            setDicts(dicts);
-        }).catch(error => {
-            console.log(`In dictList error -> ${error}`);
-        });
-    }, []);
 
     function getRows() {
         const rows = [];
@@ -47,7 +29,6 @@ function DictList() {
             const rowElements = [];
             for (let i = rowIndex; i < Math.min(rowIndex + dictsInRow, dicts.length); i++) {
                 const dict = dicts[i];
-                console.log(`${dict.name} -> ${dict.isDefault}`);
                 rowElements.push(
                     <DictListElement
                         dictData={dict}
@@ -70,15 +51,6 @@ function DictList() {
         </div>;
     };
 
-    function addNewDictionaty(name, lang, isDefault, dateCreated, wordsCount) {
-        const newElem = {name: name, lang: lang, isDefault: isDefault, dateCreated: dateCreated, wordsCount: wordsCount};
-        setDicts(arr =>  [...arr, newElem]);
-    };
-
-    function updateDictionary(oldDict, newDict) {
-        setSettingsDict(null);
-    }
-
     return (
         <div className="main-conteiner">
             <div className="title"> 
@@ -88,9 +60,11 @@ function DictList() {
                 </div>
             </div>
             {getRows()}
+            
+            {dicts[0] && <DictionaryMenu dict={dicts[0]}></DictionaryMenu>}
 
-            <SettingsDictModal dict={settingsDict} submitChanges={updateDictionary}></SettingsDictModal>
-            <CreateDictModal workState={workState} setWorkState={setWorkState} submitRezults={addNewDictionaty}/>
+            <SettingsDictModal dict={settingsDict} informFinish={() => setSettingsDict(null)}></SettingsDictModal>
+            <CreateDictModal workState={workState} setWorkState={setWorkState}/>
         </div>
     )
 };

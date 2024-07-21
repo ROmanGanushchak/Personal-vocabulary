@@ -1,6 +1,8 @@
+*.sqlite3
 *.pyc
 .venv/
 __pycache__/
 migrations/
+node_modules/
 .env
 google_key.json

@@ -34,6 +34,7 @@ class Dictionary(models.Model):
 
         WordPair.objects.create(native_word = native_word, learned_word = learned_word, dictionary = self)
         self.words_count += 1
+        self.save()
         return None
 
     def get_last_page_index(self, words_per_page: int):
@@ -69,5 +70,31 @@ class Dictionary(models.Model):
 class WordPair(models.Model):
     native_word  = models.CharField(max_length = MAX_WORD_LENGTH)
     learned_word = models.CharField(max_length = MAX_WORD_LENGTH)
-    adding_time  = models.DateTimeField(auto_now_add=True)
+    adding_time  = models.DateField(auto_now_add=True)
+    guessed_num = models.IntegerField(default=0)
+    guessing_attempts = models.IntegerField(default=0)
     dictionary   = models.ForeignKey(Dictionary, on_delete=models.CASCADE, related_name='words')
+
+    @staticmethod
+    def get(user, dict_name, id):
+        try:
+            dictionary = Dictionary.get(user, dict_name, False)
+            entry: WordPair = WordPair.objects.filter(dictionary=dictionary).get(id=id)
+            return entry
+        except ObjectDoesNotExist:
+            raise ObjectDoesNotExist('No dictionary or entry was found')
+    
+    def copy(self, dictionary: Dictionary):
+        return WordPair.objects.create(
+            native_word=self.native_word, 
+            learned_word=self.learned_word,
+            adding_time=self.adding_time,
+            guessed_num=self.guessed_num,
+            guessing_attempts=self.guessing_attempts,
+            dictionary=dictionary
+        )
+    
+    def delete(self, *args, **kwargs) -> tuple[int, dict[str, int]]:
+        self.dictionary.words_count -= 1
+        self.dictionary.save()
+        return super().delete(*args, **kwargs)

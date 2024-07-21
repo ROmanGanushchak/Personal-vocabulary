@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404
 class WordPairSerializer(serializers.ModelSerializer):
     class Meta(object):
         model = WordPair
-        fields = ['native_word', 'learned_word']
+        fields = ['native_word', 'learned_word', 'adding_time', 'guessed_num', 'guessing_attempts', 'id']
     
     def create(self, validated_data):
         dictionary = get_object_or_404(Dictionary, type=self.context.get("language_type"))
