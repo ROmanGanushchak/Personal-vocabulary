@@ -6,8 +6,12 @@ import '@styles/dictionary/list/dict-list-element.css'
 
 function DictListElement( {dictData, callSettings} ) {
     const navigate = useNavigate();
-    function pressed() {
-        navigate('/');
+    function pressedFlashPacks() {
+
+    }
+
+    function pressedList() {
+        navigate(`/dictionaries/${dictData.name}`);
     };
 
     return (
@@ -31,8 +35,8 @@ function DictListElement( {dictData, callSettings} ) {
             </div>
 
             <div className="extra-conteiner">
-                <div className="cust-btn blue-btn" onClick={pressed}> Flashcards </div>
-                <div className="cust-btn white-btn" onClick={pressed}> View list </div>
+                <div className="cust-btn blue-btn" onClick={pressedFlashPacks}> Flashcards </div>
+                <div className="cust-btn white-btn" onClick={pressedList}> View list </div>
             </div>
         </div>
     );

@@ -15,7 +15,6 @@ def authorized(original_function):
     @wraps(original_function)
     def wrapper_function(self, request: HttpRequest, *args, **kwargs):
         access_header: str = request.META.get('HTTP_AUTHORIZATION')
-        print(f"Access header -> {access_header}")
         if (not access_header):
             try:
                 access: str = request.data['access']

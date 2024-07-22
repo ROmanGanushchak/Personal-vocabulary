@@ -13,7 +13,7 @@ from authentication.decorators  import authorized
 from accounts.models            import UserProfile
 
 
-class GetLastWordPairIndex(APIView):
+class GetWordsCount(APIView):
     @authorized
     def post(self, request, name):
         user: UserProfile = request.user.profile
@@ -22,14 +22,7 @@ class GetLastWordPairIndex(APIView):
         except ObjectDoesNotExist:
             return Response({'detail': 'No dictionary found with specified name'}, status=status.HTTP_404_NOT_FOUND)
         
-        try:
-            count = request.data['count']
-        except KeyError:
-            count = user.words_per_page
-        print(f"Count -> {count}, words in dict -> ${dictionary.words_count}")
-
-        rezult: int = min(int((dictionary.words_count-1) / count) * count, dictionary.words_count-1)
-        return Response(rezult)
+        return Response(dictionary.words_count)
 
 
 class DictionaryCreateView(APIView):

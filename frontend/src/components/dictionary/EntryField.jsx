@@ -1,5 +1,5 @@
-import React, { useContext, useState } from "react";
-import { DictionaryMenuContext } from "./DictionaryMenu";
+import React, { useContext, useEffect, useState } from "react";
+import { EntryListContext } from "./EntryList";
 import copyEntryIcom from '@logos/copy-entry.svg';
 import settingsEntryIcon from '@logos/entry-settings.svg';
 import soundIcon from '@logos/sound-icon.svg';
@@ -10,8 +10,6 @@ import '@styles/dictionary/entry-field.css';
 import '@styles/common.css';
 
 /* TO DO
-notes
-multiple translate variants
 changes
 */
 
@@ -29,8 +27,9 @@ const CustomDropdownToggle = React.forwardRef(({ children, onClick }, ref) => (
 ));
 
 function EntryField( { entry } ) {
-    const {dict, enteriesHook, isBluer, askToChooseDict, fetchAndPlayAudio} = useContext(DictionaryMenuContext);
+    const {dict, enteriesHook, isBluer, askToChooseDict, fetchAndPlayAudio} = useContext(EntryListContext);
     const {deleteEntry, updateEntry, addToDictionary} = enteriesHook;
+    const [isPressed, setIsPressed] = useState(false);
 
     async function getChosenDict(dict) {
         if (dict) {
@@ -40,8 +39,13 @@ function EntryField( { entry } ) {
         }
     };
 
+    useEffect(() => {
+        if (isBluer)
+            setIsPressed(false);
+    }, [isBluer]);
+
     return (
-        <div className="entry-conteiner">
+        <div className="entry-conteiner" onClick={() => setIsPressed(!isPressed)}>
             <div className="left-part">
                 <button className="img-btn snd-btn"><img src={soundIcon} alt="voice" onClick={() => {
                     fetchAndPlayAudio(entry.word, dict.lang);
@@ -71,9 +75,9 @@ function EntryField( { entry } ) {
                 </div>
                 
                 <div className="translations_conteiner">
-                    <p className="top-text">extra trans</p>
-                    <ResponsiveText maxWidth={150} className={`${isBluer && 'text-blur'} main-text`} >{entry.translates[0]}</ResponsiveText>
-                    <p className="bottom-text">note</p>
+                    <p className={`${!isPressed && isBluer && 'text-blur'} top-text`}>extra trans</p>
+                    <ResponsiveText maxWidth={150} className={`${!isPressed && isBluer && 'text-blur'} main-text`} >{entry.translates[0]}</ResponsiveText>
+                    <p className={`${!isPressed && isBluer && 'text-blur'} bottom-text`}>note</p>
                 </div>
             </div>
         </div>

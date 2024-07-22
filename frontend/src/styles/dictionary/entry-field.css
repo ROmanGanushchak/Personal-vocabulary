@@ -66,34 +66,6 @@
     top: 25px;
 }
 
-/* .translations_conteiner {
-    position: relative;
-    display: grid;
-    height: 75px;
-    align-self: center;
-    align-items: center;
-    margin-right: 70px;
-}
-
-.extra-text {
-    position: absolute;
-    left: 50%; 
-    transform: translateX(-50%);
-    white-space: nowrap;
-}
-
-.main-text {
-    position: relative;
-} 
-
-.extra-text .top {
-    top: 30px;
-}
-
-.extra-text .bottom {
-    bottom: 10px;
-} */
-
 .translations_conteiner p {
     margin: 0 0;
 }
@@ -118,12 +90,16 @@
 
 .snd-btn img {
     width: 40px;
-    /* height: 70%; */
 }
 
 .text-blur {
     color: transparent;
     text-shadow: 0 0 10px #000;
+}
+
+.entry-conteiner:hover .text-blur{
+    text-shadow: none;
+    color: black;
 }
 
 .caret {

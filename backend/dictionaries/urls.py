@@ -12,5 +12,5 @@ urlpatterns = [
     path('get/<str:name>/<int:searchType>/', dictionary_views.DectionaryGetView().as_view(), name="dicts get"),
     path('update/<str:name>/', dictionary_views.DictionaryUpdateView.as_view(), name='dict update'),
     path('delete/<str:name>/', dictionary_views.DictionaryDelete.as_view(), name='dict delete'),
-    path('getlastindex/<str:name>/', dictionary_views.GetLastWordPairIndex.as_view(), name='get last index in dictionary'),
+    path('getlastindex/<str:name>/', dictionary_views.GetWordsCount.as_view(), name='get last index in dictionary'),
 ]

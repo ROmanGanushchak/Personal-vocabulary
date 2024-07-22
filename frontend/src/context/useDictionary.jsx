@@ -4,7 +4,7 @@ import useApi from "../hooks/auth/useApi";
 
 const DictionaryContext = createContext({});
 
-function createDinctionaryFromResponse(data) {
+function createDictionaryFromResponse(data) {
     try {
         const dict = {
             lang: data['language'], 
@@ -29,12 +29,16 @@ export function DictionaryContextProvider( {children} ) {
             const dictsResponse = response.data['dicts'];
             const dicts = [];
             for (const dict of dictsResponse) 
-                dicts.push(createDinctionaryFromResponse(dict));
+                dicts.push(createDictionaryFromResponse(dict));
             setDicts(dicts);
         }).catch(error => {
             console.log(`In dictList error -> ${error}`);
         });
     }, []);
+
+    async function addNewDictionary(dict) {
+        setDicts(arr =>  [...arr, dict]);
+    }
 
     async function addNewDictionaty(name, lang, isDefault, dateCreated, wordsCount) {
         const newElem = {name: name, lang: lang, isDefault: isDefault, dateCreated: dateCreated, wordsCount: wordsCount};
@@ -49,7 +53,7 @@ export function DictionaryContextProvider( {children} ) {
             name: name,
             is_default: isDefault
         }).then(response => {
-            const newDict = createDinctionaryFromResponse(response.data);
+            const newDict = createDictionaryFromResponse(response.data);
             setDicts(dicts => dicts.map(item => (item === oldDict) ? newDict : item));
         });
     };
@@ -61,8 +65,23 @@ export function DictionaryContextProvider( {children} ) {
         });
     };
 
+    async function getDictByName(dictName) {
+        let dict = dicts.find(item => item.name === dictName);
+        
+        if (dict === undefined) {
+            try {
+                const response = await api.get(`dictionary/get/${dictName}/0/`);
+                dict = createDictionaryFromResponse(response.data['dictionary']);
+                addNewDictionary(dict);
+            } catch (error) {
+                return null;
+            }
+        }
+        return dict;
+    }
+
     return (
-        <DictionaryContext.Provider value={ {dicts, addNewDictionaty, updateDictionary, deleteDictionary} }> 
+        <DictionaryContext.Provider value={ {dicts, addNewDictionaty, updateDictionary, deleteDictionary, getDictByName} }> 
             {children} 
         </DictionaryContext.Provider>
     );

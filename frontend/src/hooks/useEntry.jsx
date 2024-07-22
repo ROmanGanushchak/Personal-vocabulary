@@ -9,7 +9,7 @@ function useEntry(dict) {
     const [currentEntries, setCurrentEntries] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
     const isLoaded = useRef(false);
-    const wordsPerPage = 2;
+    const wordsPerPage = 8;
     const {api} = useApi();
 
     function getEntryFromResponse(data) {
@@ -49,11 +49,7 @@ function useEntry(dict) {
 
     async function updateStartIndex() {
         try {
-            const response = await api.post(`dictionary/getlastindex/${dict.name}/`, {
-                count: wordsPerPage
-            });
-
-            const index = response.data;
+            const index = Math.floor((dict.wordsCount-1) / wordsPerPage) * wordsPerPage;
             setCurrentIndex(index);
             return index;
         } catch (error) {
@@ -94,6 +90,7 @@ function useEntry(dict) {
 
         api.post(`dictionary/deleteentry/${dict.name}/${entry.id}/`)
         .then(reponse => {
+            dict.wordsCount--;
             if (currentEntries.length === 1 && currentEntries[0] === entry) {
                 init();
             } else {
@@ -117,6 +114,7 @@ function useEntry(dict) {
             name: dict.name,
             name_to_add: dictToAdd.name
         }).then(response => {
+            dictToAdd.wordsCount++;
             return getEntryFromResponse(response.data)
         }).catch(error => {
             console.log("Server error while copping entry\n" + error);
@@ -132,10 +130,18 @@ function useEntry(dict) {
         })
     };
 
+    function goToNextPage(move) {
+        const newIndex = currentIndex + move*wordsPerPage;
+        const newIndexWithBounds = Math.min(Math.max(newIndex, 0), Math.floor((dict.wordsCount-1)/wordsPerPage)*wordsPerPage);
+        setCurrentIndex(newIndexWithBounds);
+        loadEntries(newIndexWithBounds);
+    }
+
     return {
         currentEntries, 
         currentIndex, 
         wordsPerPage,
+        goToNextPage,
         loadEntries, 
         deleteEntry, 
         updateEntry, 

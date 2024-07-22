@@ -6,7 +6,6 @@ import SettingsDictModal from "./SettingsDictModal";
 import DeleteVocabularyApproval from "./DeleteVocabularyApproval";
 import { Button } from "react-bootstrap";
 import DictionaryContext from "../../../context/useDictionary";
-import DictionaryMenu from "../DictionaryMenu";
 
 import '@styles/dictionary/list/dict-list.css'
 
@@ -60,8 +59,6 @@ function DictList() {
                 </div>
             </div>
             {getRows()}
-            
-            {dicts[0] && <DictionaryMenu dict={dicts[0]}></DictionaryMenu>}
 
             <SettingsDictModal dict={settingsDict} informFinish={() => setSettingsDict(null)}></SettingsDictModal>
             <CreateDictModal workState={workState} setWorkState={setWorkState}/>

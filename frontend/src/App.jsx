@@ -11,6 +11,7 @@ import { ApiProvider } from './context/auth/useApiContext'
 import GuardedComponent from './components/GuardedComponent'
 import DictList from './components/dictionary/dictionaryList/DictList'
 import { DictionaryContextProvider } from './context/useDictionary'
+import EntryListMenu from './menus/EntryListMenu'
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
               <Route path='/password/reset/get_email' element={<ResetPasswordEmail />}/>
               
               <Route element={<GuardedComponent />}>
+                  <Route path='/dictionaries/:dictName' element={<EntryListMenu />}/>
                   <Route path='/dictionaries' element={<DictList />}/>
                   <Route path='/' element={<TranslateMenu />}/>
               </Route> 
