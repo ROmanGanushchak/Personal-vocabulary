@@ -5,7 +5,7 @@ from rest_framework             import status
 from django.shortcuts       import get_object_or_404
 from django.core.exceptions import ObjectDoesNotExist
 
-from ..models                    import Dictionary, Entry
+from ..models                    import Dictionary, Entry, SearchTypes
 from ..serializers               import WriteEntrySerializer
 from authentication.decorators  import authorized, extract_inputs
 from accounts.models            import UserProfile
@@ -29,13 +29,12 @@ class EntryCreateView(APIView):
 
 class EntryGetView(APIView):
     @authorized
-    @extract_inputs(["start"], ["count", "search"])
-    def post(self, request, start: int, count: int|None, search: str|None, name: str, by_lang: int) -> Response: # start
+    @extract_inputs(["start"], ["count", "search", "searchType"])
+    def post(self, request, start: int, count: int|None, search: str|None, searchType: int|None, name: str, by_lang: int) -> Response: # start
+        if (start < 0):
+            return Response({"details": "uncorect index of word_pair"}, status=status.HTTP_400_BAD_REQUEST)
         if (count is None):
             count = request.user.profile.words_per_page
-        
-        if (start == -1):
-            return Response({'words': []})
 
         try:
             dictionary: Dictionary = Dictionary.get(request.user.profile, name, by_lang)
@@ -43,16 +42,32 @@ class EntryGetView(APIView):
             return Response({"details": "no such dictinary created"}, status=status.HTTP_400_BAD_REQUEST)
 
         if (search):
-            pairs = dictionary.make_search(search)
+            if searchType is not None and searchType not in SearchTypes.values():
+                return Response("Uncorrect sorting type", status=status.HTTP_400_BAD_REQUEST)
+
+            if (searchType is None):
+                entries = dictionary.make_search(search)
+            else:
+                entries = dictionary.make_search(search, searchType)
+            pairs = dictionary.get_sorted_entries(entries)
         else:
             pairs = dictionary.get_sorted_entries()
-
-        if (start >= len(pairs) or start < 0):
-            return Response({"details": "uncorect index of word_pair"}, status=status.HTTP_400_BAD_REQUEST) 
-
+        
+        startChanged = False
+        if (start > len(pairs)):
+            start = max(int((len(pairs)-1) / count) * count, 0)
+            startChanged = True
+        
         words = pairs[start : min(len(pairs), start+count)]
         serializer = WriteEntrySerializer(words, many=True)
-        return Response({"words": serializer.data})
+        data = {
+            "words": serializer.data
+        }
+        if (startChanged):
+            data['start'] = start
+        if (dictionary.words_count != len(pairs)):
+            data['count'] = len(pairs)
+        return Response(data)
 
 
 class EntryDelete(APIView):

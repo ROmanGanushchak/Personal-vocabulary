@@ -2,20 +2,24 @@ import { useState, useEffect, useRef, useContext } from "react";
 import useApi from "./auth/useApi";
 import DictionaryContext from "../context/useDictionaries";
 
-export function createEntry(word, translates, dictionary) {
-    
-};
+export const SearchTypes = {
+    word: 0,
+    translates: 1,
+    notes: 2,
+    time: 3
+}
 
 function useEntry(dict) {
     const {changeSorting} = useContext(DictionaryContext);
     const [currentEntries, setCurrentEntries] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
-    const [search, setSearch] = useState("");
+    const [search, _setSearch] = useState("");
+    const [searchType, _setSearchType] = useState(SearchTypes.word);
     const isLoaded = useRef(false);
     const [wordsPerPage, _setWordsPerPage] = useState(dict.wordsPerPage);
     const [sort, _setSort] = useState(dict.sort);
+    const [wordsCount, _setWordsCount] = useState(dict.wordsCount);
     const {api} = useApi();
-    const lastSortType = useRef(dict.sort);
 
     function getEntryFromResponse(data) {
         try {
@@ -33,28 +37,61 @@ function useEntry(dict) {
         };
     };
 
-    async function getEntries(startIndex, count=wordsPerPage) {
+    async function getEntries(startIndex, count=wordsPerPage, search=search, _searchType=searchType) {
         const entries = [];
-        await api.post(`dictionary/getword/${dict.name}/0/`, {
+        let index = startIndex;
+        let newWordsCount = dict.wordsCount;
+
+        const data = {
             start: startIndex,
             count: count
-        }).then(response => {
+        }
+        if (search !== "") {
+            data.search = search;
+            data.searchType = _searchType;
+        }
+        console.log("Sent data:");
+        console.log(data);
+
+        await api.post(`dictionary/getword/${dict.name}/0/`, data)
+        .then(response => {
+            console.log(response.data);
             const entriesData = response.data['words'];
             for (const data of entriesData) {
                 entries.push(getEntryFromResponse(data));
             }
+
+            if ('start' in response.data)
+                index = response.data['start'];
+            if ('count' in response.data)
+                newWordsCount = response.data['count'];
         }).catch(error => {
             return [];
         });
 
-        return entries;
+        return [entries, index, newWordsCount];
     };
 
-    async function loadEntries(startIndex, count=wordsPerPage) {
-        const entries = await getEntries(startIndex, count);
-        if (entries)
-            setCurrentEntries(entries);
+    async function loadEntriesNoModification(startIndex, count=wordsPerPage) {
+        const [entries, index, newCount] = await getEntries(startIndex, count);
+        if (entries) {
+            if (index === startIndex)
+                setCurrentEntries(entries);
+            else
+                setCurrentEntries([])
+        }
     };
+
+    async function loadEntries(startIndex, count=wordsPerPage, search=search, _searchType=searchType) {
+        const [entries, index, newWordsCount] = await getEntries(startIndex, count, search, _searchType);
+        if (entries) {
+            setCurrentEntries(entries);
+            if (index !== startIndex)
+                setCurrentIndex(index);
+            if (wordsCount !== newWordsCount)
+                _setWordsCount(newWordsCount);
+        }
+    }
 
     function updateStartIndex(count=wordsPerPage) {
         const index = Math.max(Math.floor((dict.wordsCount-1) / count), 0) * count;
@@ -66,7 +103,7 @@ function useEntry(dict) {
         const index = updateStartIndex();
         
         try {
-            await loadEntries(index);
+            await loadEntriesNoModification(index);
             isLoaded.current = true;
         } catch(error) {
             console.log("Error while loading entries\n");
@@ -81,13 +118,17 @@ function useEntry(dict) {
         }
     }, []);
 
-    useEffect(() => {
-        async function makeSearch() {
+    async function setSearch(searched) {
+        _setSearch(searched);
+        loadEntries(currentIndex, wordsPerPage, searched);
+    };
 
-        };
-
-        makeSearch();
-    }, [search]);
+    async function setSearchType(type) {
+        _setSearchType(type);
+        if (search) {
+            loadEntries(currentIndex, wordsCount, search, type);
+        }
+    };
 
     async function setWordsPerPage(number) {
         if (number < 2 || number > 20)
@@ -105,7 +146,6 @@ function useEntry(dict) {
     };
 
     async function setSort(newSortType) {
-        console.log(`Set new sort -> ${newSortType}, ${sort}`);
         if (sort === newSortType)
             return;
         
@@ -177,6 +217,11 @@ function useEntry(dict) {
         currentEntries, 
         currentIndex, 
         wordsPerPage,
+        wordsCount,
+        search,
+        searchType,
+        setSearchType,
+        setSearch,
         setWordsPerPage,
         goToNextPage,
         setSort,
@@ -186,6 +231,15 @@ function useEntry(dict) {
         addToDictionary, 
         increaseGuesingNumber
     };
+};
+
+export const entryExample = {
+    word: "word", 
+    translates: ['translation'], 
+    notes: "notes", 
+    guesingScore: [0, 1], 
+    addingTime: "10-07-2020", 
+    id: 1
 };
 
 export default useEntry;

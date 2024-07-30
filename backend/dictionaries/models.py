@@ -1,7 +1,8 @@
 from __future__ import annotations
+from enum import Enum
 from typing import List
 from django.db import models
-from django.db.models import ExpressionWrapper, F, IntegerField
+from django.db.models import ExpressionWrapper, F, Q, IntegerField
 from django.core.exceptions import ObjectDoesNotExist
 from accounts.models import UserProfile, User
 
@@ -12,6 +13,16 @@ class SortingTypes(models.IntegerChoices):
     AddingTimeReverse = 2, 'TimeReverse'
     LeastQuased = 3, 'LeastQuesed'
     LeastSpelled = 4, 'LeastSpelled'
+
+class SearchTypes(Enum):
+    Word = 0
+    Translates = 1
+    Notes = 2
+    AddingTime = 3
+
+    @classmethod
+    def values(cls):
+        return {type.value for type in cls}
 
 
 class DictionaryGroup(models.Model):
@@ -84,10 +95,27 @@ class Dictionary(models.Model):
                 ).order_by('num_difference')
         
         return arr
+    
+    def make_search(self, search, searchType=SearchTypes.Word):
+        if not isinstance(searchType, SearchTypes):
+            searchType = SearchTypes(searchType)
 
-    def make_search(self, search):
-        words = self.words.filter(title__startswith=search)
-        return self.get_sorted_entries(words)
+        match (searchType):
+            case SearchTypes.Word:
+                words = self.words.filter(word__startswith=search)
+            case SearchTypes.Translates:
+                words = self.words.filter(
+                    Q(translates__translate1__startswith=search) |
+                    Q(translates__translate2__startswith=search) |
+                    Q(translates__translate3__startswith=search)
+                ).distinct()
+            case SearchTypes.Notes:
+                words = self.words.filter(notes__startswith=search)
+            case SearchTypes.AddingTime:
+                words = self.words.filter(adding_time__startswith=search)
+            case _:
+                raise Exception(f"The sended searchType {searchType} is not present in SearchTypes")
+        return words
 
     def get_last_page_index(self, words_per_page: int):
         return int(self.words.count() / words_per_page) * words_per_page

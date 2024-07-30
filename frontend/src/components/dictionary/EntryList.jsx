@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useRef, useState } from "react";
-import useEntry from "../../hooks/useEntry";
+import useEntry, {entryExample, SearchTypes} from "../../hooks/useEntry";
 import EntryField from "./EntryField";
 import ChooseDictionaryModal from "./ChooseDictionaryModal";
 import useAudio from "../../hooks/useAudio";
@@ -19,12 +19,18 @@ export const EntryListContext = createContext({});
 function EntryList( {dict} ) {
     const {sortingChoices, changeSorting, sortingChoicesKeys} = useContext(DictionaryContext);
     const enteriesHook = useEntry(dict);
-    const {currentEntries, currentIndex, goToNextPage, wordsPerPage, setWordsPerPage, setSort} = enteriesHook;
+    const {
+        currentEntries, currentIndex, 
+        goToNextPage, wordsPerPage, 
+        setWordsPerPage, setSort, 
+        setSearch, wordsCount,
+        setSearchType} = enteriesHook;
     const navigate = useNavigate();
     const [isBluer, setIsBleur] = useState(false);
     const [isChoosingDict, setIsChoosingDict] = useState(false);
     const chosenDictProvideFunc = useRef(null);
     const fetchAndPlayAudio = useAudio();
+    const searchLoadTimer = useRef(null);
 
     const [mergeBtnIsActive, setMergeBtnIsActive] = useState(false);
     const mergeBtnRef = useRef(null);
@@ -40,9 +46,11 @@ function EntryList( {dict} ) {
             chosenDictProvideFunc.current(dict);
     };
 
-    function searchTextChange(text) {
-
-    };
+    function askSearch(searched) {
+        if (searchLoadTimer.current !== null)
+            clearTimeout(searchLoadTimer.current);
+        searchLoadTimer.current = setTimeout(setSearch, 400, searched);
+    }
 
     return <EntryListContext.Provider value={{dict, enteriesHook, isBluer, askToChooseDict, fetchAndPlayAudio}}>
         <div className="entry-list-main-conteiner">
@@ -79,8 +87,21 @@ function EntryList( {dict} ) {
             <div className="entry-list-conteiner">
                 <div className="small-settings">
                     <div className="search">
-                        <img src={searchImg} alt="" onChange={e => searchTextChange(e.target.value)}/>
-                        <input type="text" placeholder="Search"/>
+                        <BtnDropdown text={<img src={searchImg} alt="" className="search-icon"/>} className="img-btn" value="default">
+                            <Dropdown.Item onClick={() => setSearchType(SearchTypes.word)}> 
+                                Word
+                            </Dropdown.Item>
+                            <Dropdown.Item onClick={() => setSearchType(SearchTypes.translates)}> 
+                                Translates
+                            </Dropdown.Item>
+                            <Dropdown.Item onClick={() => setSearchType(SearchTypes.notes)}> 
+                                Notes
+                            </Dropdown.Item>
+                            <Dropdown.Item onClick={() => setSearchType(SearchTypes.time)}> 
+                                AddingTime
+                            </Dropdown.Item>
+                        </BtnDropdown>
+                        <input type="text" placeholder="Search" onChange={e => askSearch(e.target.value)}/>
                     </div>
                     <div className="extra-small-settings">
                         <button className={`st-btn ${isBluer && "marked"}`} onClick={() => setIsBleur(bluer => !bluer)}>Bluer</button>
@@ -109,9 +130,13 @@ function EntryList( {dict} ) {
                 <div className="entry-page-nav">
                     <Button variant="light" className={`${currentIndex===0 && "hide"}`} onClick={() => goToNextPage(-1)}>Prev</Button>
                     <div className="current-entries-indexs">
-                        <p>Showing {currentIndex}-{Math.min(currentIndex+currentEntries.length, dict.wordsCount)} of {dict.wordsCount} entries</p>
+                        <p>Showing {currentIndex}-{Math.min(currentIndex+currentEntries.length, dict.wordsCount)} of {wordsCount} entries</p>
                     </div>
                     <Button variant="light" className={`${currentIndex+wordsPerPage >= dict.wordsCount && "hide"}`} onClick={() => goToNextPage(1)}>Next</Button>
+                </div>
+
+                <div className="hide"> {/* to make minimum width, if posible remove */}
+                    <EntryField entry={entryExample} />
                 </div>
             </div>
         </div>

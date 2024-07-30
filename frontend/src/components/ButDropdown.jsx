@@ -1,5 +1,6 @@
 import React from "react";
 import { Dropdown } from "react-bootstrap";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const CustomDropdownToggle = React.forwardRef(({ children, onClick, className }, ref) => (
     <button
@@ -14,7 +15,7 @@ const CustomDropdownToggle = React.forwardRef(({ children, onClick, className },
     </button>
 ));
 
-function BtnDropdown( {text, children, className=""} ) {
+function BtnDropdown( {text, children, className="", menuClassName=""} ) {
     return <>
         <style>
             {`.no-arrow::after {
@@ -27,7 +28,7 @@ function BtnDropdown( {text, children, className=""} ) {
                 {text}
             </Dropdown.Toggle>
 
-            <Dropdown.Menu>
+            <Dropdown.Menu className={menuClassName}>
                 {children}
             </Dropdown.Menu>
         </Dropdown>

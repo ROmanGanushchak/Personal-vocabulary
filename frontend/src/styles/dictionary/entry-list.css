@@ -47,7 +47,6 @@
     border: 2px solid darkgray;
     align-items: center;
     border-radius: 20px;
-    overflow: hidden;
     width: 130px;
     height: 30px;
     align-items: center;
@@ -64,6 +63,8 @@
     width: 100%;
     border: none;
     border-radius: 0px;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
     margin: 0 0;
 }
 
@@ -74,6 +75,11 @@
 
 .search:focus-within {
     border-color: lightseagreen;
+}
+
+.search-icon {
+    width: 25px;
+    position: relative;   
 }
 
 .hide {
@@ -175,6 +181,7 @@
 .marked-sort-elem {
     background-color: #53A6FF;
 }
+
 
 /* #4396DF
 
