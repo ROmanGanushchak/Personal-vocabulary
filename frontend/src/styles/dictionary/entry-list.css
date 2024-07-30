@@ -78,6 +78,7 @@
 
 .hide {
     opacity: 0;
+    pointer-events: none;
 }
 
 .full-hide {
@@ -146,16 +147,33 @@
     border: none;
     margin: 0 0;
     padding: 0 0;
-    width: 10px;
-    height: 10px;
 }
 
 .words-per-page {
    display: flex;
    flex-direction: row;
+   gap: 4px;
+   
    height: min-content;
    align-items: center; 
    text-align: center;
+   border: 1px solid lightgrey;
+   border-radius: 10px;
+   padding: 0 2px;
+   margin: 5px 0;
+   margin-right: 10px;
+}
+
+.words-per-page p {
+    font-size: 15px;
+}
+
+.word-per-page-header {
+    font-size: 13px;
+}
+
+.marked-sort-elem {
+    background-color: #53A6FF;
 }
 
 /* #4396DF

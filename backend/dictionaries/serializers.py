@@ -1,25 +1,20 @@
 from rest_framework import serializers
-from .models        import WordPair, Dictionary
+from .models        import Entry, Dictionary, SortingTypes
 from django.shortcuts import get_object_or_404
 
-class WordPairSerializer(serializers.ModelSerializer):
-    class Meta(object):
-        model = WordPair
-        fields = ['native_word', 'learned_word', 'adding_time', 'guessed_num', 'guessing_attempts', 'id']
-    
-    def create(self, validated_data):
-        dictionary = get_object_or_404(Dictionary, type=self.context.get("language_type"))
-        instance = WordPair.objects.create(
-            native_word  = validated_data.get("native_word"),
-            learned_word = validated_data.get("learned_word"),
-            dictionary = dictionary
-        )
+class WriteEntrySerializer(serializers.ModelSerializer):
+    translates = serializers.SerializerMethodField()
 
-        return instance
+    class Meta(object):
+        model = Entry
+        fields = ['word', 'translates', 'notes', 'adding_time', 'guessed_num', 'guessing_attempts', 'id']
+    
+    def get_translates(self, obj: Entry):
+        return obj.translates.get_arr()
 
 
 class DictionarySerializer(serializers.ModelSerializer):
     class Meta(object):
         model = Dictionary
-        fields = ['language', 'is_default', 'name', 'date_created', 'words_count']
+        fields = ['language', 'is_default', 'name', 'date_created', 'words_count', 'words_per_page', 'sort_type']
         read_only_fields = tuple('words_count')

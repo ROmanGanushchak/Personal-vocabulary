@@ -75,9 +75,9 @@ function EntryField( { entry } ) {
                 </div>
                 
                 <div className="translations_conteiner">
-                    <p className={`${!isPressed && isBluer && 'text-blur'} top-text`}>extra trans</p>
+                    <p className={`${!isPressed && isBluer && 'text-blur'} top-text`}>{entry.translates?.[1] || ''}</p>
                     <ResponsiveText maxWidth={150} className={`${!isPressed && isBluer && 'text-blur'} main-text`} >{entry.translates[0]}</ResponsiveText>
-                    <p className={`${!isPressed && isBluer && 'text-blur'} bottom-text`}>note</p>
+                    <p className={`${!isPressed && isBluer && 'text-blur'} bottom-text`}>{entry?.notes || ''}</p>
                 </div>
             </div>
         </div>

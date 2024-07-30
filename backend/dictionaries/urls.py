@@ -13,4 +13,5 @@ urlpatterns = [
     path('update/<str:name>/', dictionary_views.DictionaryUpdateView.as_view(), name='dict update'),
     path('delete/<str:name>/', dictionary_views.DictionaryDelete.as_view(), name='dict delete'),
     path('getlastindex/<str:name>/', dictionary_views.GetWordsCount.as_view(), name='get last index in dictionary'),
+    path('mergetdicts/', dictionary_views.MergeDictionaries.as_view(), name='merge dicts'),
 ]

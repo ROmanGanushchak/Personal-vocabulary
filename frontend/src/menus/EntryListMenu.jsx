@@ -1,7 +1,7 @@
 import { useContext, useState, useEffect } from "react";
 import EntryList from "../components/dictionary/EntryList";
 import { useParams } from "react-router-dom";
-import DictionaryContext from "../context/useDictionary";
+import DictionaryContext from "../context/useDictionaries";
 import { Spinner } from "react-bootstrap";
 
 function EntryListMenu() {
@@ -12,7 +12,7 @@ function EntryListMenu() {
     useEffect(() => {
         async function init() {
             setDict(await getDictByName(dictName));
-        }
+        };
 
         init();
     }, [dictName]);

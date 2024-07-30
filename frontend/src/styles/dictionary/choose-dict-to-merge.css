@@ -1,0 +1,21 @@
+.radio-cont {
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    gap: 10px;
+}
+
+.radio-cont p {
+    font-size: 17px;
+}
+
+.radio-cont input {
+    width: 15px;
+}
+
+.bottom-part {
+    width: 100%;
+    padding: 10px 10px;
+    display: flex;
+    flex-direction: row-reverse;
+}

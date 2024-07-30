@@ -35,17 +35,23 @@ def authorized(original_function):
         return original_function(self, request, *args, **kwargs)
     return wrapper_function
 
-def extract_inputs(arg_names: List['str']):
+def extract_inputs(arg_names: List[str], extra_arg_names: List[str] = []):
     def decorator_function(original_function):
         @wraps(original_function)
         def wrapper_function(self, request: HttpRequest, *args, **kwargs):
-            print(request.data)
             aditional_args = []
             for arg_name in arg_names:
                 try:
                     aditional_args.append(request.data[arg_name])
                 except KeyError:
                     return Response({'detail': f'The nececery argument {arg_name} was not provided'}, status=status.HTTP_400_BAD_REQUEST)
+            
+            for arg_name in extra_arg_names:
+                try:
+                    data = request.data[arg_name]
+                except KeyError:
+                    data = None
+                aditional_args.append(data)
             
             return original_function(self, request, *aditional_args, *args, **kwargs)
         return wrapper_function

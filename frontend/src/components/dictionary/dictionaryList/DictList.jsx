@@ -3,9 +3,8 @@ import useApi from "../../../hooks/auth/useApi";
 import DictListElement from "./DictListElement";
 import CreateDictModal from './CreateDictModal';
 import SettingsDictModal from "./SettingsDictModal";
-import DeleteVocabularyApproval from "./DeleteVocabularyApproval";
 import { Button } from "react-bootstrap";
-import DictionaryContext from "../../../context/useDictionary";
+import DictionaryContext from "../../../context/useDictionaries";
 
 import '@styles/dictionary/list/dict-list.css'
 

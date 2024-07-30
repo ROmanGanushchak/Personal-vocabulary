@@ -4,7 +4,7 @@ import { useContext, useState } from 'react';
 import InformalLangSelector from './InformalLangSelector';
 import useApi from '../../../hooks/auth/useApi';
 import { WorkStates } from './DictList';
-import DictionaryContext from '../../../context/useDictionary';
+import DictionaryContext from '../../../context/useDictionaries';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '@styles/dictionary/list/create-dict-modal.css';

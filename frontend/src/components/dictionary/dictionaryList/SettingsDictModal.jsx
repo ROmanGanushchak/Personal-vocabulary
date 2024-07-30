@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import { Button, Modal } from "react-bootstrap";
 import useApi from "../../../hooks/auth/useApi";
 import DeleteVocabularyApproval from "./DeleteVocabularyApproval";
-import DictionaryContext from "../../../context/useDictionary";
+import DictionaryContext from "../../../context/useDictionaries";
 
 import '@styles/dictionary/list/create-dict-modal.css';
 import '@styles/dictionary/list/settings-dict-modal.css';

@@ -7,9 +7,9 @@ from rest_framework.permissions import IsAuthenticated
 from django.shortcuts       import get_object_or_404
 from django.core.exceptions import ObjectDoesNotExist
 
-from ..models                    import WordPair, Dictionary, DictionaryGroup
-from ..serializers               import WordPairSerializer, DictionarySerializer
-from authentication.decorators  import authorized
+from ..models                    import Entry, Dictionary, DictionaryGroup
+from ..serializers               import DictionarySerializer
+from authentication.decorators  import authorized, extract_inputs
 from accounts.models            import UserProfile
 
 
@@ -64,7 +64,8 @@ class DectionaryGetView(APIView):
                     return Response({'defail': 'Failed to find dictionary with specified properties'}, status=status.HTTP_404_NOT_FOUND)
             return Response({"dictionary": DictionarySerializer(instance=dictionary).data})
         except Exception as e:
-            print(f"Unknown error in DectionaryGetView.get view:\n{e}")
+            print(f"Unknown error in DectionaryGetView.get view:")
+            print(e)
             return Response({'detail': 'Unknown error'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
@@ -93,4 +94,19 @@ class DictionaryDelete(APIView):
             dictionary.delete()
         except ObjectDoesNotExist:
             return Response({'detail': 'Dictionary with spesified name was not found'}, status=status.HTTP_404_NOT_FOUND)
+        return Response()
+
+
+class MergeDictionaries(APIView):
+    @authorized
+    @extract_inputs(['source', 'to', 'type'])
+    def post(self, request, source_name, to_name, type): # type - 0 ignorecopy, 1-update_with new, 2-keep both 
+        try:
+            source: Dictionary = Dictionary.get(request.user.profile, source_name, False)
+            target: Dictionary = Dictionary.get(request.user.profile, to_name, False)
+        except ObjectDoesNotExist:
+            return Response("No dictionary with that name was found", status=status.HTTP_404_NOT_FOUND)
+
+        for entry in Entry.objects.filter(dictionary=source):
+            target.add_entry(entry, type)
         return Response()

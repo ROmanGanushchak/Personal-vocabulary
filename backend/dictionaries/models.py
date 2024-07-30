@@ -1,8 +1,18 @@
+from __future__ import annotations
+from typing import List
 from django.db import models
+from django.db.models import ExpressionWrapper, F, IntegerField
 from django.core.exceptions import ObjectDoesNotExist
 from accounts.models import UserProfile, User
 
 MAX_WORD_LENGTH = 64
+
+class SortingTypes(models.IntegerChoices):
+    AddingTime = 1, 'Time'
+    AddingTimeReverse = 2, 'TimeReverse'
+    LeastQuased = 3, 'LeastQuesed'
+    LeastSpelled = 4, 'LeastSpelled'
+
 
 class DictionaryGroup(models.Model):
     user = models.OneToOneField(UserProfile, on_delete=models.CASCADE, related_name = 'dictionary_group', unique=True)
@@ -13,7 +23,9 @@ class Dictionary(models.Model):
     is_default = models.BooleanField(default=False)
     language = models.CharField(max_length=16, default='en')
     date_created = models.DateField(auto_now_add=True)
+    words_per_page = models.IntegerField(default=20)
     words_count = models.IntegerField(default=0)
+    sort_type = models.IntegerField(choices=SortingTypes.choices, default=SortingTypes.AddingTime)
     group = models.ForeignKey(DictionaryGroup, on_delete=models.CASCADE, related_name = 'dictionaries')
 
     class Meta:
@@ -26,16 +38,56 @@ class Dictionary(models.Model):
         else:
             return DictionaryGroup.objects.get(user=user).dictionaries.get(name=name)
 
-    def add_word_pair(self, ignore_copy: int, native_word: str, learned_word: str) -> list | None:
+    def add_word_pair(self, ignore_copy: int, word: str, translates: str, note: str=None) -> list | None:
         if (not ignore_copy):
-            added_words = self.words.filter(native_word=native_word)
+            added_words = self.words.filter(word=word)
             if (added_words):
                 return added_words
 
-        WordPair.objects.create(native_word = native_word, learned_word = learned_word, dictionary = self)
+        Entry.create(word = word, notes=note, dictionary = self, translates=translates)
         self.words_count += 1
         self.save()
         return None
+    
+    def add_entry(self, entry: Entry, type: int=0) -> bool: # type - 0 ignorecopy, 1-update_with new, 2-keep both 
+        try:
+            same_entries: List[Entry] = self.words.objects.filter(word=entry.word)
+        except Exception:
+            same_entries = []
+        
+        match (type):
+            case 0:
+                if (len(same_entries) == 0):
+                    entry.copy(self)
+            case 1:
+                for entry in same_entries:
+                    entry.delete()
+                entry.copy(self)
+            case 2:
+                entry.copy(self)
+    
+    def get_sorted_entries(self, words=None) -> List[Entry]:
+        if (words is None):
+            words = self.words
+
+        match (self.sort_type):
+            case SortingTypes.AddingTime:
+                arr = words.order_by("-adding_time")
+            case SortingTypes.AddingTimeReverse:
+                arr = words.order_by("-adding_time")[::-1]
+            case SortingTypes.LeastQuased:
+                arr = words.annotate(
+                    num_difference=ExpressionWrapper(
+                        F('guessed_num') - F('guessing_attempts'), 
+                        output_field=IntegerField()
+                    )
+                ).order_by('num_difference')
+        
+        return arr
+
+    def make_search(self, search):
+        words = self.words.filter(title__startswith=search)
+        return self.get_sorted_entries(words)
 
     def get_last_page_index(self, words_per_page: int):
         return int(self.words.count() / words_per_page) * words_per_page
@@ -48,7 +100,7 @@ class Dictionary(models.Model):
             except ObjectDoesNotExist:
                 self.name = name
 
-        props_types = [['is_default', bool]]
+        props_types = [['is_default', bool], ['words_per_page', int], ['sort_type', int]]
         props = []
 
         for prop_name, prop_type in props_types:
@@ -67,27 +119,60 @@ class Dictionary(models.Model):
         self.save()
 
 
-class WordPair(models.Model):
-    native_word  = models.CharField(max_length = MAX_WORD_LENGTH)
-    learned_word = models.CharField(max_length = MAX_WORD_LENGTH)
+class TranslationVarians(models.Model):
+    translate1 = models.CharField(max_length=64, default='')
+    translate2 = models.CharField(max_length=64, null=True, default=None)
+    translate3 = models.CharField(max_length=64, null=True, default=None)
+    
+    def set_arr(self, arr):
+        print(f"Got arr {arr} with size {len(arr)}")
+        if len(arr) > 3 or len(arr) < 1:
+            raise IndexError("the arrays length is larger then the slotes count")
+        
+        if (len(arr) > 0):
+            self.translate1 = arr[0]
+        if (len(arr) > 1):
+            self.translate2 = arr[1]
+        if (len(arr) > 2):
+            self.translate3 = arr[2]
+        self.save()
+    
+    def get_arr(self):
+        return [self.translate1, self.translate2, self.translate3]
+    
+    def copy(self):
+        return TranslationVarians.objects.create(
+            translate1=self.translate1,
+            translate2=self.translate2,
+            translate3=self.translate3
+        )
+
+
+class Entry(models.Model):
+    word  = models.CharField(max_length = MAX_WORD_LENGTH)
+    translates = models.OneToOneField(TranslationVarians, on_delete=models.CASCADE)
+    notes = models.CharField(max_length=128, null=True, default=None)
     adding_time  = models.DateField(auto_now_add=True)
     guessed_num = models.IntegerField(default=0)
     guessing_attempts = models.IntegerField(default=0)
-    dictionary   = models.ForeignKey(Dictionary, on_delete=models.CASCADE, related_name='words')
+    dictionary = models.ForeignKey(Dictionary, on_delete=models.CASCADE, related_name='words')
 
     @staticmethod
     def get(user, dict_name, id):
         try:
             dictionary = Dictionary.get(user, dict_name, False)
-            entry: WordPair = WordPair.objects.filter(dictionary=dictionary).get(id=id)
+            entry: Entry = Entry.objects.filter(dictionary=dictionary).get(id=id)
             return entry
         except ObjectDoesNotExist:
             raise ObjectDoesNotExist('No dictionary or entry was found')
     
     def copy(self, dictionary: Dictionary):
-        return WordPair.objects.create(
-            native_word=self.native_word, 
-            learned_word=self.learned_word,
+        dictionary.words_count+=1
+        dictionary.save()
+        return Entry.create(
+            word=self.word, 
+            translates=self.translates.copy(),
+            notes=self.notes,
             adding_time=self.adding_time,
             guessed_num=self.guessed_num,
             guessing_attempts=self.guessing_attempts,
@@ -98,3 +183,15 @@ class WordPair(models.Model):
         self.dictionary.words_count -= 1
         self.dictionary.save()
         return super().delete(*args, **kwargs)
+
+    @classmethod
+    def create(cls, word, translates, dictionary, notes=None):
+        translation_varians = TranslationVarians()
+        translation_varians.set_arr(translates)
+        
+        return cls.objects.create(
+            word=word,
+            translates=translation_varians,
+            dictionary=dictionary,
+            notes=notes
+        )

@@ -10,7 +10,7 @@ import { AuthProvider } from './context/auth/useAuthContext'
 import { ApiProvider } from './context/auth/useApiContext'
 import GuardedComponent from './components/GuardedComponent'
 import DictList from './components/dictionary/dictionaryList/DictList'
-import { DictionaryContextProvider } from './context/useDictionary'
+import { DictionaryContextProvider } from './context/useDictionaries'
 import EntryListMenu from './menus/EntryListMenu'
 
 function App() {
