@@ -86,9 +86,7 @@ class IncreaseGueasingCount(APIView):
     def post(self, request, name: str, id: int, result: int):
         try:
             entry: Entry = Entry.get(request.user.profile, name, id)
-            entry.guessing_attempts += 1
-            if (result):
-                entry.guessed_num += 1
+            entry.increaseGueasingNum(result)
             entry.save()
         except ObjectDoesNotExist as e:
             return Response({'detail': str(e)}, status=status.HTTP_404_NOT_FOUND)

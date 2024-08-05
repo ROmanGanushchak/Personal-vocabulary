@@ -9,33 +9,32 @@ export const SearchTypes = {
     time: 3
 }
 
+export function getEntryFromResponse(data) {
+    try {
+        return {
+            word: data['word'],
+            translates: data['translates'],
+            notes: data['notes'],
+            guesingScore: [data['guessed_num'], data['guessing_attempts']],
+            addingTime: data['adding_time'],
+            id: data['id']
+        };
+    } catch(error) {
+        console.log(`Not all data were specified, ${error}`);
+        return null;
+    };
+};
+
 function useEntry(dict) {
     const {changeSorting} = useContext(DictionaryContext);
     const [currentEntries, setCurrentEntries] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [search, _setSearch] = useState("");
     const [searchType, _setSearchType] = useState(SearchTypes.word);
-    const isLoaded = useRef(false);
     const [wordsPerPage, _setWordsPerPage] = useState(dict.wordsPerPage);
     const [sort, _setSort] = useState(dict.sort);
     const [wordsCount, _setWordsCount] = useState(dict.wordsCount);
     const {api} = useApi();
-
-    function getEntryFromResponse(data) {
-        try {
-            return {
-                word: data['word'],
-                translates: data['translates'],
-                notes: data['notes'],
-                guesingScore: [data['guessed_num'], data['guessing_attempts']],
-                addingTime: data['adding_time'],
-                id: data['id']
-            };
-        } catch(error) {
-            console.log(`Not all data were specified, ${error}`);
-            return null;
-        };
-    };
 
     async function getEntries(startIndex, count=wordsPerPage, search=search, _searchType=searchType) {
         const entries = [];
@@ -50,12 +49,9 @@ function useEntry(dict) {
             data.search = search;
             data.searchType = _searchType;
         }
-        console.log("Sent data:");
-        console.log(data);
 
         await api.post(`dictionary/getword/${dict.name}/0/`, data)
         .then(response => {
-            console.log(response.data);
             const entriesData = response.data['words'];
             for (const data of entriesData) {
                 entries.push(getEntryFromResponse(data));
@@ -73,7 +69,7 @@ function useEntry(dict) {
     };
 
     async function loadEntriesNoModification(startIndex, count=wordsPerPage) {
-        const [entries, index, newCount] = await getEntries(startIndex, count);
+        const [entries, index, newCount] = await getEntries(startIndex, count, "", 0);
         if (entries) {
             if (index === startIndex)
                 setCurrentEntries(entries);
@@ -94,7 +90,7 @@ function useEntry(dict) {
     }
 
     function updateStartIndex(count=wordsPerPage) {
-        const index = Math.max(Math.floor((dict.wordsCount-1) / count), 0) * count;
+        const index = Math.max(Math.floor((wordsCount-1) / count), 0) * count;
         setCurrentIndex(index);
         return index;
     };
@@ -104,7 +100,6 @@ function useEntry(dict) {
         
         try {
             await loadEntriesNoModification(index);
-            isLoaded.current = true;
         } catch(error) {
             console.log("Error while loading entries\n");
             console.log(error);
@@ -113,9 +108,8 @@ function useEntry(dict) {
     };
 
     useEffect(() => {
-        if (!isLoaded.current && dict) {
-            init();
-        }
+        console.log(dict.id);
+        init();
     }, []);
 
     async function setSearch(searched) {

@@ -10,4 +10,5 @@ urlpatterns = [
     path('connection/check/', ConnectionChecker.as_view(), name='connection checker'),
     path('dictionary/', include('dictionaries.urls')),
     path('translate/', include('translators.urls'), name="translator"),
+    path('flashcards/', include('flashcards.urls'), name="flashcards")
 ]

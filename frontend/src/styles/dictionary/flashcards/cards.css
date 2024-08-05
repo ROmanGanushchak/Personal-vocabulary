@@ -1,0 +1,75 @@
+.flash-card-main-conteier {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.upper-part-conteiner {
+    width: 100%;
+    height: min-content;
+    padding: 10px 10px;
+    margin: 0 0;
+    background-color: #FFFFFF;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.upper-part {
+    width: 100%;
+    height: min-content;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dict-name {
+    font-size: 20px;
+    font-weight:500;
+}
+
+.dict-lang {
+    font-size: 13px;
+    font-weight:400;
+}
+
+.progress-bar-conteiner {
+    width: 100%;
+    height: 7px;
+}
+
+.main-body {
+    background-color: aliceblue;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.flash-card {
+    width: 70vw;
+    height: 80vh;
+    background-color: #FFFFFF;
+    border: 1px solid #D2D2D2;
+    border-radius: 20px;
+    box-shadow: 3px 7px 13px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+@media (max-width: 1280px) {
+    .flash-card {
+        width: 80vw;
+    }
+}
+
+@media (max-width: 768px) {
+    .flash-card {
+        width: 95vw;
+        height: 90vh;
+    }
+}

@@ -72,7 +72,7 @@ function EntryList( {dict} ) {
 
                 <div className="extra-options col-display-r">
                     <button onClick={() => navigate(`flashpacks`)} 
-                    className="flash-pack-btn" style={{width: '130px'}}>Flashpacks</button>
+                    className="flash-pack-btn" style={{width: '130px'}}>Flashcards</button>
                     <div className="row-display" style={{gap: '5px'}}>
                         <p className="word-per-page-header">Words count: </p>
                         <div className="words-per-page">

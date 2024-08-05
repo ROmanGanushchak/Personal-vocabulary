@@ -5,6 +5,7 @@ from django.db import models
 from django.db.models import ExpressionWrapper, F, Q, IntegerField
 from django.core.exceptions import ObjectDoesNotExist
 from accounts.models import UserProfile, User
+from flashcards.factor import getFlashCardBasicFactor
 
 MAX_WORD_LENGTH = 64
 
@@ -43,7 +44,7 @@ class Dictionary(models.Model):
         unique_together = (('name', 'group'))
 
     @staticmethod
-    def get(user: User, name: str, by_lang: bool):
+    def get(user: UserProfile, name: str, by_lang: bool):
         if (by_lang):
             return DictionaryGroup.objects.get(user=user).dictionaries.get(language=name, is_default=True)
         else:
@@ -183,7 +184,18 @@ class Entry(models.Model):
     adding_time  = models.DateField(auto_now_add=True)
     guessed_num = models.IntegerField(default=0)
     guessing_attempts = models.IntegerField(default=0)
+    flashcard_factor = models.IntegerField(default=0)
     dictionary = models.ForeignKey(Dictionary, on_delete=models.CASCADE, related_name='words')
+
+    def increaseGueasingNum(self, isQueased: bool) -> None:
+        self.guessing_attempts += 1
+        self.guessed_num += int(isQueased)
+        self.flashcard_factor = getFlashCardBasicFactor(
+            self.dictionary.words.filter(word=self.word).count(),
+            [self.guessed_num, self.guessing_attempts],
+            0
+        )
+        self.save()
 
     @staticmethod
     def get(user, dict_name, id):
@@ -216,10 +228,17 @@ class Entry(models.Model):
     def create(cls, word, translates, dictionary, notes=None):
         translation_varians = TranslationVarians()
         translation_varians.set_arr(translates)
-        
-        return cls.objects.create(
+
+        entry: Entry = cls.objects.create(
             word=word,
             translates=translation_varians,
             dictionary=dictionary,
-            notes=notes
+            notes=notes,
+            flashcard_factor = getFlashCardBasicFactor(
+                dictionary.words.filter(word=word).count(),
+                [0, 0],
+                0
+            )
         )
+
+        return entry

@@ -1,0 +1,145 @@
+.flashcards-settings-conteiner {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    /* align-items: center; */
+    padding: 15px 20px;
+    overflow: hidden;
+}
+
+.base-info-conteiner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: baseline;
+    margin-top: 20px;
+    position: relative;
+}
+
+.dict-title {
+    margin-left: 12px;
+    font-size: 40px;
+}
+
+.upper-part {
+    width: 90vh;
+    max-width: 600px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.single-set {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.single-set p {
+    font-size: 15px;
+}
+
+.radio {
+    display: flex;
+    flex-direction: row;
+}
+
+.radio input {
+    width: 10px;
+    margin-right: 10px;
+}
+
+.full-width {
+    width: 100%;
+    justify-content: baseline;
+}
+
+.down-part {
+    position: absolute;
+    bottom: 0;
+    width: 80%;
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    gap: 10px;
+}
+
+.settings {
+    height: 100%;
+    width: 47%;
+    max-width: 500px;
+    align-self: center;
+    background-color: #f4fBff;
+    border: 1px solid #D2D2D2;
+    border-radius: 20px;
+    padding: 10px 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.upper-settings {
+    width: 100%;
+    height: min-content;
+    padding: 5px 10px;
+    display: flex;
+    justify-content: center;
+    border-bottom: 1px solid #D2D2D2;
+    position: relative;
+}
+
+.main-settings {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    overflow: hidden;
+}
+
+.settings-exit-btn {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.settings-save-btn {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.hide-small-screen {
+    display: flex;
+}
+
+.show-on-small {
+    display: none;
+}
+
+@media (max-width: 1000px) {
+    .hide-small-screen {
+        display: none;
+    }
+    
+    .show-on-small {
+        display: flex;
+    }
+
+    .no-padding-small {
+        padding: 0 0;
+    }
+
+    .settings {
+        width: 100%;
+        height: 100%;
+        max-width: none;
+    }
+}

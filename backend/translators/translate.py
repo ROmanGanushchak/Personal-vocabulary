@@ -4,8 +4,8 @@ from iso639 import Lang
 import deepl
 from backend.settings import DEEPL_AUTH_KEY
 from abc import ABC, abstractmethod
-from azure.core.credentials import AzureKeyCredential
-from azure.ai.translation.text import TextTranslationClient
+# from azure.core.credentials import AzureKeyCredential
+# from azure.ai.translation.text import TextTranslationClient
 from uuid import uuid4
 
 class TranslationError(Exception):
@@ -126,62 +126,62 @@ class DeeplTranslator(Translator):
         return targetLang in DeeplTranslator.target_langs
 
 
-BING_API_KEY = "131531279cd94b69ae02d65b24fbb5b5"
-BING_ENDPOINT = "https://api.cognitive.microsofttranslator.com/"
+# BING_API_KEY = "131531279cd94b69ae02d65b24fbb5b5"
+# BING_ENDPOINT = "https://api.cognitive.microsofttranslator.com/"
 
-class BingTranslator(Translator):
-    credential = AzureKeyCredential(BING_API_KEY)
-    text_translator = TextTranslationClient(credential=credential, endpoint=BING_ENDPOINT, region='westeurope')
-    iso_to_bing_lang_map = {"zh": "zh-Hans","zh-Hant": "zh-Hant","he": "he", "id": "id","no": "no", "nb": "no",   "nn": "no",  "sr": "sr-Cyrl",  "sr-Latn": "sr-Latn","zh-Hans": "zh-Hans", "zh-Hant": "zh-Hant", "pt-PT": "pt-PT",  "pt-BR": "pt-BR", "es-ES": "es-ES", "es-MX": "es-MX", "es-419": "es-419"}
-    bing_to_iso = {v: k for k, v in iso_to_bing_lang_map.items()}
-    languages = {lang_code for lang_code in text_translator.get_supported_languages()['translation']}
+# class BingTranslator(Translator):
+#     credential = AzureKeyCredential(BING_API_KEY)
+#     text_translator = TextTranslationClient(credential=credential, endpoint=BING_ENDPOINT, region='westeurope')
+#     iso_to_bing_lang_map = {"zh": "zh-Hans","zh-Hant": "zh-Hant","he": "he", "id": "id","no": "no", "nb": "no",   "nn": "no",  "sr": "sr-Cyrl",  "sr-Latn": "sr-Latn","zh-Hans": "zh-Hans", "zh-Hant": "zh-Hant", "pt-PT": "pt-PT",  "pt-BR": "pt-BR", "es-ES": "es-ES", "es-MX": "es-MX", "es-419": "es-419"}
+#     bing_to_iso = {v: k for k, v in iso_to_bing_lang_map.items()}
+#     languages = {lang_code for lang_code in text_translator.get_supported_languages()['translation']}
 
-    @staticmethod
-    def convert_to_code(langName: str):
-        lang = Translator.convert_to_isocode(langName)
-        if (langCode := BingTranslator.iso_to_bing_lang_map.get(lang)):
-            return langCode
-        return lang
+#     @staticmethod
+#     def convert_to_code(langName: str):
+#         lang = Translator.convert_to_isocode(langName)
+#         if (langCode := BingTranslator.iso_to_bing_lang_map.get(lang)):
+#             return langCode
+#         return lang
     
-    @staticmethod
-    def source_lang_to_code(langName: str):
-        lang = Translator.convert_to_isocode(langName)
-        if (langCode := BingTranslator.iso_to_bing_lang_map.get(lang)):
-            return langCode
-        return lang
+#     @staticmethod
+#     def source_lang_to_code(langName: str):
+#         lang = Translator.convert_to_isocode(langName)
+#         if (langCode := BingTranslator.iso_to_bing_lang_map.get(lang)):
+#             return langCode
+#         return lang
     
-    @staticmethod
-    def target_lang_to_code(langName: str):
-        return BingTranslator.source_lang_to_code(langName)
+#     @staticmethod
+#     def target_lang_to_code(langName: str):
+#         return BingTranslator.source_lang_to_code(langName)
 
-    @staticmethod
-    def translateText(text: str, lang: str, source_lang: str = None):
-        if (lang not in BingTranslator.languages):
-            raise TranslationError("Bing does not support this target language")
-        if (source_lang and source_lang != 'none' and source_lang not in BingTranslator.languages):
-            raise TranslationError("Bing does not support this source language")
+#     @staticmethod
+#     def translateText(text: str, lang: str, source_lang: str = None):
+#         if (lang not in BingTranslator.languages):
+#             raise TranslationError("Bing does not support this target language")
+#         if (source_lang and source_lang != 'none' and source_lang not in BingTranslator.languages):
+#             raise TranslationError("Bing does not support this source language")
 
-        response = BingTranslator.text_translator.translate(
-            body=[text], to_language=[lang], 
-            from_language=None if (source_lang == 'none') else source_lang
-        )
-        translated: str = response[0]['translations'][0]['text']
+#         response = BingTranslator.text_translator.translate(
+#             body=[text], to_language=[lang], 
+#             from_language=None if (source_lang == 'none') else source_lang
+#         )
+#         translated: str = response[0]['translations'][0]['text']
         
-        if (source_lang != None):
-            lang = Lang(source_lang).name
-        else:
-            langCode = response[0]['detectedLanguage']['language']
-            if (langCode in BingTranslator.bing_to_iso):
-                lang = Lang(BingTranslator.bing_to_iso(langCode)).name
-            else:
-                lang = Lang(langCode).name
+#         if (source_lang != None):
+#             lang = Lang(source_lang).name
+#         else:
+#             langCode = response[0]['detectedLanguage']['language']
+#             if (langCode in BingTranslator.bing_to_iso):
+#                 lang = Lang(BingTranslator.bing_to_iso(langCode)).name
+#             else:
+#                 lang = Lang(langCode).name
 
-        return (translated, lang)
+#         return (translated, lang)
 
-    @staticmethod
-    def isSourceInLangs(sourceLang: str):
-        return sourceLang in BingTranslator.languages
+#     @staticmethod
+#     def isSourceInLangs(sourceLang: str):
+#         return sourceLang in BingTranslator.languages
 
-    @staticmethod
-    def isTargetInLangs(targetLang: str):
-        return targetLang in BingTranslator.languages
+#     @staticmethod
+#     def isTargetInLangs(targetLang: str):
+#         return targetLang in BingTranslator.languages

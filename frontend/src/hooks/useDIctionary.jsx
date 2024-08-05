@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
 import useApi from "./auth/useApi";
+import googleLogo from '@logos/google-logo.png';
 
 function useDictionary(dict) {
     const [lang, setLang] = useState(dict.lang);
@@ -51,7 +52,8 @@ export function createDictionaryFromResponse(data) {
             isDefault: data['is_default'],
             wordsCount: data['words_count'],
             wordsPerPage:  data['words_per_page'],
-            sort: data['sort_type']
+            sort: data['sort_type'],
+            logo: googleLogo,
         }
     } catch(error) {
         throw new Error(`Not all data were provoided to form dictionary\n${error}`);

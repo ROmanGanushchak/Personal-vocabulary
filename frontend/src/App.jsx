@@ -9,9 +9,10 @@ import TranslateMenu from './components/Tranlations/TranslateMenu'
 import { AuthProvider } from './context/auth/useAuthContext'
 import { ApiProvider } from './context/auth/useApiContext'
 import GuardedComponent from './components/GuardedComponent'
-import DictList from './components/dictionary/dictionaryList/DictList'
 import { DictionaryContextProvider } from './context/useDictionaries'
 import EntryListMenu from './menus/EntryListMenu'
+import DictionaryListMenu from './menus/DictionaryListMenu'
+import FlashCardsMenu from './menus/FlashCardsMenu'
 
 function App() {
   return (
@@ -28,8 +29,9 @@ function App() {
               <Route path='/password/reset/get_email' element={<ResetPasswordEmail />}/>
               
               <Route element={<GuardedComponent />}>
+                  <Route path='/dictionaries/:dictName/flashcards/' element={<FlashCardsMenu />}/>
                   <Route path='/dictionaries/:dictName' element={<EntryListMenu />}/>
-                  <Route path='/dictionaries' element={<DictList />}/>
+                  <Route path='/dictionaries' element={<DictionaryListMenu />}/>
                   <Route path='/' element={<TranslateMenu />}/>
               </Route> 
             </Routes>

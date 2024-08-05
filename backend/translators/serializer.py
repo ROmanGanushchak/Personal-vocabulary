@@ -1,7 +1,7 @@
 from rest_framework import serializers
-from .translate import GoogleTranslator, DeeplTranslator, BingTranslator, Translator
+from .translate import GoogleTranslator, DeeplTranslator, Translator #, BingTranslator
 
-translators = {"google": GoogleTranslator, "deepl": DeeplTranslator, 'bing': BingTranslator}
+translators = {"google": GoogleTranslator, "deepl": DeeplTranslator} #, 'bing': BingTranslator
 
 class TranslateSerializer(serializers.Serializer):
     translator = serializers.CharField(required=True)
