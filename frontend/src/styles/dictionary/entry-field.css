@@ -105,3 +105,13 @@
 .caret {
     display: none;
 }
+
+@media (max-width: 768px) {
+    .translations_conteiner {
+        margin-right: 20px;
+    }
+
+    .entry-conteiner {
+        width: 90vw;
+    }
+}

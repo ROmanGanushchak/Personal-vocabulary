@@ -7,59 +7,12 @@
 .text-inout-conteiner {
     display: inline-flex;
     flex-direction: column;
-    width: 500px;
+    width: 650px;
     height: min-content;
     overflow: hidden;
-    border-bottom-right-radius: var(--field-rounding);
-    border-bottom-left-radius: var(--field-rounding);
-    border-top-right-radius: var(--field-rounding);
+    border-radius: var(--field-rounding);
     box-shadow: 3px 2px 2px gainsboro;
-}
-
-.language-field {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px 20px;
-    border: var(--field-border);
-    border-bottom: none;
-    background-color: #F7FCFE;
-    border-top-right-radius: var(--field-rounding);
-    border-top-left-radius: var(--field-rounding);
-    text-align: center;
-    width: 100%;
-    height: min-content;
-}
-
-.languages {
-    display: flex;
-    flex-direction: row;
-    gap: 20px;
-    align-items: center;
-    text-align: center;
-}
-
-.language-variants {
-    background-color: transparent;
-    font-size: 20px;
-    border: none;
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
-    color: #5F6B6D;
-}
-
-.active {
-    color: #3A9ABC;
-    border-bottom: 1px solid #3A9ABC;
-}
-
-.all-l-types {
-
-}
-
-.active-language {
-
+    position: relative;
 }
 
 textarea {
@@ -83,4 +36,12 @@ textarea:focus {
     display: flex;
     flex-direction: row;
     align-items: flex-end;
+}
+
+.extra-tool-bar {
+    position: absolute;
+    bottom: 5px;
+    left: 0;
+    width: 100%;
+    padding: 0 10px;
 }

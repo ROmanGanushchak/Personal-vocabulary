@@ -53,6 +53,7 @@ export function createDictionaryFromResponse(data) {
             wordsCount: data['words_count'],
             wordsPerPage:  data['words_per_page'],
             sort: data['sort_type'],
+            id: data['id'],
             logo: googleLogo,
         }
     } catch(error) {

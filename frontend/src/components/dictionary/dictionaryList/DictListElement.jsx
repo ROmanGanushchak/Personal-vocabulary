@@ -7,7 +7,7 @@ import '@styles/dictionary/list/dict-list-element.css'
 function DictListElement( {dictData, callSettings} ) {
     const navigate = useNavigate();
     function pressedFlashPacks() {
-
+        navigate(`/dictionaries/${dictData.name}/flashcards`);
     }
 
     function pressedList() {

@@ -52,6 +52,8 @@ function useEntry(dict) {
 
         await api.post(`dictionary/getword/${dict.name}/0/`, data)
         .then(response => {
+            console.log("Got entries:");
+            console.log(response);
             const entriesData = response.data['words'];
             for (const data of entriesData) {
                 entries.push(getEntryFromResponse(data));
@@ -64,11 +66,12 @@ function useEntry(dict) {
         }).catch(error => {
             return [];
         });
-
+        
         return [entries, index, newWordsCount];
     };
 
     async function loadEntriesNoModification(startIndex, count=wordsPerPage) {
+        console.log("request to load entries");
         const [entries, index, newCount] = await getEntries(startIndex, count, "", 0);
         if (entries) {
             if (index === startIndex)
@@ -78,8 +81,8 @@ function useEntry(dict) {
         }
     };
 
-    async function loadEntries(startIndex, count=wordsPerPage, search=search, _searchType=searchType) {
-        const [entries, index, newWordsCount] = await getEntries(startIndex, count, search, _searchType);
+    async function loadEntries(startIndex, count=wordsPerPage, _search=search, _searchType=searchType) {
+        const [entries, index, newWordsCount] = await getEntries(startIndex, count, _search, _searchType);
         if (entries) {
             setCurrentEntries(entries);
             if (index !== startIndex)
@@ -170,26 +173,13 @@ function useEntry(dict) {
                         updatedEntries.push(replacment);
                     return updatedEntries;
                 });
+                _setWordsCount(c => c-1);
             }
         });
     };
 
     function updateEntry(entry, newEntry) {
 
-    };
-
-    async function addToDictionary(entry, dictToAdd) {
-        api.post('dictionary/copyentry/', {
-            id: entry.id,
-            name: dict.name,
-            name_to_add: dictToAdd.name
-        }).then(response => {
-            dictToAdd.wordsCount++;
-            return getEntryFromResponse(response.data)
-        }).catch(error => {
-            console.log("Server error while copping entry\n" + error);
-            return error;
-        });
     };
 
     async function increaseGuesingNumber(entry, rezult) {
@@ -222,18 +212,8 @@ function useEntry(dict) {
         loadEntries, 
         deleteEntry, 
         updateEntry, 
-        addToDictionary, 
         increaseGuesingNumber
     };
-};
-
-export const entryExample = {
-    word: "word", 
-    translates: ['translation'], 
-    notes: "notes", 
-    guesingScore: [0, 1], 
-    addingTime: "10-07-2020", 
-    id: 1
 };
 
 export default useEntry;

@@ -32,3 +32,27 @@
     font-size: 30px;
     font-weight: bold;
 }
+
+.extra-tools-bar {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+    background-color: #fbf7ef;
+    border: 2px solid lightgray;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    padding: 7px 5px;
+}
+
+.translator-seloctor {
+    background-color: transparent;
+    border: none;
+    border-radius: none;
+    flex-direction: column;
+    min-width: none;
+    width: min-content;
+    height: min-content;
+    min-width: none;
+    align-items: center;
+}

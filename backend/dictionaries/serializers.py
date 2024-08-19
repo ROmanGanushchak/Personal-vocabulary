@@ -16,5 +16,5 @@ class WriteEntrySerializer(serializers.ModelSerializer):
 class DictionarySerializer(serializers.ModelSerializer):
     class Meta(object):
         model = Dictionary
-        fields = ['language', 'is_default', 'name', 'date_created', 'words_count', 'words_per_page', 'sort_type']
+        fields = ['language', 'is_default', 'name', 'date_created', 'words_count', 'words_per_page', 'sort_type', 'id']
         read_only_fields = tuple('words_count')

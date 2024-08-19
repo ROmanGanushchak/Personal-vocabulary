@@ -1,43 +1,36 @@
 import React, { useEffect, useState, useRef, useContext } from "react";
-import '@styles/translation/text-inout-field.css'
-import LangSelector from "./LangSelector";
 import { TranslateMenuContext, undefinedLang } from "./TranslateMenu";
+import useAudio from "../../hooks/useAudio";
+import LangSelector from "./LangSelector";
+
+import soundIcom from "@logos/sound-icon.svg";
+import updateIcon from '@logos/update-icon.svg';
+import clearIcon from "@logos/clear-icon.svg";
+import saveIcon from '@logos/save-icon.svg';
+import '@styles/translation/text-inout-field.css'
 
 const fontSizeByLength = [[30, "45px"], [100, "35px"], [200, "30px"], [300, "25px"]]
-const maxLanguagesChached = 3;
+
+export function scaleObgAnimation(btn, time, scale=null) {
+    if (scale != null)
+        btn.style.setProperty('--scale-to', scale);    
+    // console.log("Activate animation");
+    console.log(btn);
+    btn.style.animation = `buttonGrow ${time}s forwards`;
+    setTimeout(() => {
+        btn.style.animation = "";
+    }, time * 1000);
+}
+
+export function scaleBtnAnimation(e, time) {
+    return scaleObgAnimation(e.currentTarget, time);
+}
 
 function TextInOutField( {type, text, setText, lang, changeLanguage, langsVariants=["English"]} ) { //type:  true - in, false - out 
-    const { detectedLang } = useContext(TranslateMenuContext);
-    const [minTextAreaHeight] = useState(250);
-    const [languagesVariants, setLanguagesVariants] = useState(langsVariants);
-    const [activeLanguageIndex, setActivaLanguageIndex] = useState(0);
-    const [lastAddedLangIndex, setLastAddedLangIndex] = useState(0);
+    const { detectedLang, updateTranslation, save } = useContext(TranslateMenuContext);
+    const [minTextAreaHeight] = useState(400);
+    const fetchAndPlayAudio = useAudio();
     const rextAreaRef = useRef(null);
-
-    function updateLangView(language) {
-        const indexInArray = languagesVariants.indexOf(language);
-        if (indexInArray !== -1) {
-            setActivaLanguageIndex(indexInArray);
-        } else if (languagesVariants.length === maxLanguagesChached) {
-            setLastAddedLangIndex((lastAddedLangIndex + 1) % maxLanguagesChached);
-            languagesVariants[lastAddedLangIndex] = language;
-            setActivaLanguageIndex(lastAddedLangIndex);
-        } else {
-            setLastAddedLangIndex(languagesVariants.length);
-            languagesVariants.push(language);
-            setActivaLanguageIndex(languagesVariants.length-1);
-        }
-    }
-
-    const chooseNewLanguage = (language) => {
-        changeLanguage(language);
-        updateLangView(language);
-    };
-
-    useEffect(() => {
-        if (lang != languagesVariants[activeLanguageIndex]) 
-            updateLangView(lang);
-    }, [lang]);
 
     useEffect(() => {
         const length = text.length;
@@ -62,25 +55,24 @@ function TextInOutField( {type, text, setText, lang, changeLanguage, langsVarian
     }, [text])
     
     return (
-        <div className="">
+        <div>
             <div className="text-inout-conteiner">
-                <div className="language-field"> 
-                    <div className="languages">
-                        {languagesVariants.map((item, index) => {
-                            return (<button className={`language-variants ${activeLanguageIndex === index && "active"}`} 
-                                    onClick={e => chooseNewLanguage(e.target.textContent)} key={index}>
-                                {(activeLanguageIndex === index && item === undefinedLang && detectedLang) ? 
-                                    <div className="in-line">{detectedLang} <span style={{fontSize: '12px'}}>(detected)</span></div> 
-                                    : item
-                                }
-                            </button>)
-                        })}
-                    </div>
-                    <LangSelector onLangChosen={chooseNewLanguage}/>
-                </div>
+                <LangSelector type={type} lang={lang} changeLanguage={changeLanguage} langsVariants={langsVariants}/>
                 <textarea ref={rextAreaRef} name="" autoFocus={type} onChange={e => setText(e.target.value)} value={text} style={{height: `${minTextAreaHeight}px`}}></textarea>
-                <div className="extra-tool-bar">
-
+                <div className="extra-tool-bar row-display">
+                    <div className="row-b-d" style={{gap: "20px"}}>
+                        <button className="img-btn" onClick={e => {
+                            scaleBtnAnimation(e, 1);
+                            fetchAndPlayAudio(text, (lang == "Undefined") ? null : lang)}}>
+                                <img src={soundIcom} alt="" /></button>
+                        <button className="img-btn" onClick={e => {setText(""); scaleBtnAnimation(e, 1)}}>
+                            <img src={clearIcon} alt="clear" height="25px"/></button>
+                    </div>
+                    
+                    {type && <button className="img-btn" onClick={e => {updateTranslation();scaleBtnAnimation(e, 1);}}>
+                        <img src={updateIcon} alt="retranslate" height="25px" /></button>}
+                    {!type&& <button className="img-btn" onClick={e => {save();scaleBtnAnimation(e, 1);}}>
+                    <img src={saveIcon} alt="retranslate" height="25px" /></button>}
                 </div>
             </div>
         </div>

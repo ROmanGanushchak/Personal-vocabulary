@@ -1,0 +1,58 @@
+.flash-card-body {
+    padding: 10px 10px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.flash-conteiner {
+    justify-content: baseline;
+    min-width: 40%;
+}
+
+.word-conteiner {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;
+    margin-left: 10px;
+}
+
+.word-conteiner p {
+    font-size: 40px;
+    font-weight: 300;
+}
+
+.translate {
+    margin-left: 10px;
+    font-size: 30px;
+    font-weight: 300;
+}
+
+.notes-text {
+    margin-left: 10px;
+    font-size: 30px;
+    font-weight: 300;
+}
+
+.card-bottom-text {
+    position: absolute;
+    bottom: 20px;
+    border-top: 1px solid grey;
+}
+
+.card-bottom-text p {
+    font-size: 20px;
+    font-weight: 300;
+}
+
+.main-info {
+    height: 100%;
+}
+
+.flash-card-ending {
+    background-color: #778899;
+    color: white;
+}

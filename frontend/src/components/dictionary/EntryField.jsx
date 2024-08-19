@@ -8,6 +8,7 @@ import ResponsiveText from "../ResponsiveText";
 
 import '@styles/dictionary/entry-field.css';
 import '@styles/common.css';
+import useEntryFabric from "../../hooks/useEntryFabric";
 
 /* TO DO
 changes
@@ -28,7 +29,8 @@ const CustomDropdownToggle = React.forwardRef(({ children, onClick }, ref) => (
 
 function EntryField( { entry } ) {
     const {dict, enteriesHook, isBluer, askToChooseDict, fetchAndPlayAudio} = useContext(EntryListContext);
-    const {deleteEntry, updateEntry, addToDictionary} = enteriesHook;
+    const {deleteEntry, updateEntry} = enteriesHook;
+    const {addToDictionary} = useEntryFabric();
     const [isPressed, setIsPressed] = useState(false);
 
     async function getChosenDict(dict) {
@@ -66,10 +68,10 @@ function EntryField( { entry } ) {
                                 <Dropdown.Item onClick={() => deleteEntry(entry)}> Delete </Dropdown.Item>
                             </Dropdown.Menu>
                         </Dropdown>
-                        <p>{entry.guesingScore[0]}/{entry.guesingScore[1]}</p>
+                        <p className="hide-small-screen">{entry.guesingScore[0]}/{entry.guesingScore[1]}</p>
                     </div>
 
-                    <div className="row-end-align">
+                    <div className="row-end-align hide-small-screen">
                         <p>{entry.addingTime}</p>
                     </div>
                 </div>

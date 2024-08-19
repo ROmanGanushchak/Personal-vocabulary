@@ -17,6 +17,9 @@ function useAudio() {
     };
 
     async function fetchAndPlayAudio(text, language) {
+        if (!text)
+            return;
+
         let audioData = null;
         if ([text, language] in hashedAudio.current) {
             audioData = hashedAudio.current[[text, language]];
@@ -30,7 +33,7 @@ function useAudio() {
             }
             hashedAudio.current[[text, language]] = audioData;
         }
-
+        
         const blob = new Blob([audioData], { type: 'audio/mp3' });
         const url = URL.createObjectURL(blob);
         

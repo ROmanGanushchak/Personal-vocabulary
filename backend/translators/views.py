@@ -32,14 +32,17 @@ class GetAudoView(APIView):
     @authorized
     @extract_inputs(['text', 'lang'])
     def post(self, request, text, lang_name):
-        print("In audio")
         try:
-            lang_code = GoogleTranslator.source_lang_to_code(lang_name)
+            if lang_name == None:
+                lang_code = None
+            else:
+                lang_code = GoogleTranslator.source_lang_to_code(lang_name)
         except Exception:
-            return Response({'detail' : "This language is not supported"}, status=status.HTTP_400_NOT_FOUND)
+            return Response({'detail' : "This language is not supported"}, status=status.HTTP_400_BAD_REQUEST)
         
         try:
-            print("Trying to translate")
             return get_audio(text, lang_code)
-        except Exception:
-            return Response({'detail' : "Error while getting speach from api"}, status=status.HTTP_400_NOT_FOUND)
+        except Exception as e: 
+            print("exception: ")
+            print(e)
+            return Response({'detail' : "Error while getting speach from api"}, status=status.HTTP_400_BAD_REQUEST)

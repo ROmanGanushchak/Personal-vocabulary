@@ -5,9 +5,9 @@ import { createDictionaryFromResponse } from "../hooks/useDIctionary";
 const DictionaryContext = createContext({});
 
 export function DictionaryContextProvider( {children} ) {
-    const [dicts, setDicts] = useState([useState({name: '', id: 'some'})]);
+    const [dicts, setDicts] = useState([]);
+    const initialDicts = useRef([]);
     const {api} = useApi();
-    const wasLoaded= useRef(false);
     const isLoaded = useRef(false);
     const initAwaitFuncs = useRef([]);
     const sortingChoices = useRef({"Time": 1, "TimeReverse": 2, "LeastQuesed": 3, "LeastSpelled": 4});
@@ -21,7 +21,12 @@ export function DictionaryContextProvider( {children} ) {
             for (const dict of dictsResponse) 
                 dicts.push(createDictionaryFromResponse(dict));
             setDicts(dicts);
-            wasLoaded.current = true;
+            isLoaded.current = true;
+
+            initialDicts.current = dicts;
+            for (const func of initAwaitFuncs.current) 
+                func();
+            initAwaitFuncs.current = [];
         }).catch(error => {
             console.log(`In useDictionaries error -> ${error}`);
         });
@@ -32,24 +37,22 @@ export function DictionaryContextProvider( {children} ) {
             return;
         
         return new Promise(resolve => {
-            initAwaitFuncs.current.push(() => resolve());
+            initAwaitFuncs.current.push(resolve);
         });
+    };
+
+    async function getDicts() {
+        if (isLoaded.current)
+            return dicts;
+        
+        await waitInit();
+        return initialDicts.current;
     };
 
     useEffect(() => {
         if (!isLoaded.current)
             init();
     }, []);
-
-    useEffect(() => {
-        if (wasLoaded.current && !isLoaded.current) {
-            isLoaded.current = true;
-            for (const func of initAwaitFuncs.current) {
-                func();
-            }
-            initAwaitFuncs.current = [];
-        }
-    }, [dicts]);
 
     async function addNewDictionary(dict) {
         setDicts(arr =>  [...arr, dict]);
@@ -68,7 +71,7 @@ export function DictionaryContextProvider( {children} ) {
     };
 
     async function getDictByName(dictName) {
-        await waitInit();
+        const dicts = await getDicts();
         let dict = dicts.find(item => item.name === dictName);
         
         if (dict === undefined) {
@@ -83,9 +86,15 @@ export function DictionaryContextProvider( {children} ) {
         return dict;
     };
 
+    async function getDictByID(id) {
+        const dicts = await getDicts();
+        let dict = dicts.find(item => item.id === id); 
+        return dict || null;
+    };
+
     async function changeSorting(dict, newSortingType) {
         if (dict.sort === newSortingType)
-            return;
+            return; 
         
         await api.post(`dictionary/update/${dict.name}/`, {
             sort_type: newSortingType
@@ -119,7 +128,7 @@ export function DictionaryContextProvider( {children} ) {
     };
 
     return (
-        <DictionaryContext.Provider value={ {dicts, sortingChoices, sortingChoicesKeys, updateDictionary, changeSorting, addNewDictionaty, deleteDictionary, getDictByName, mergeDictionaries} }> 
+        <DictionaryContext.Provider value={ {dicts, sortingChoices, sortingChoicesKeys, updateDictionary, changeSorting, addNewDictionaty, deleteDictionary, getDictByName, mergeDictionaries, getDictByID} }> 
             {children} 
         </DictionaryContext.Provider>
     );

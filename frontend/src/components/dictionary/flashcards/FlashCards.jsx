@@ -1,13 +1,16 @@
 import useFlashCards from "../../../hooks/useFlashcards";
-import googleLogo from '@logos/google-logo.png';
 import { useNavigate } from "react-router-dom";
-import { ProgressBar } from "react-bootstrap";
-import quitImg from '@logos/quit.svg';
+import { Button, ProgressBar } from "react-bootstrap";
 import FlashCardSettings, {TimePriorities} from "./FlashCardSettings";
+import FlashCard from "./FlashCard";
+import { createContext, useState, useEffect } from "react";
+
+import quitImg from '@logos/quit.svg';
+import settingsIcom from "@logos/settings-icon.svg";
 
 import "@styles/common.css";
+import "@styles/dictionary/flashcards/card.css";
 import "@styles/dictionary/flashcards/cards.css";
-import { createContext, useState } from "react";
 
 export const FlashCardContext = createContext({});
 
@@ -31,24 +34,30 @@ function FlashCards( {dict} ) {
         showingIndex,
         flashCards,
         init,
-        goToNextFlashCard,
+        start,
         showNextFlashCard,
         showPrevFlashCard,
-        getCurrentFlashcard
+        finish
     } = useFlashCards();
 
-    async function startFlashCards() {
-        await init(lastWordsLimit, count, dict.name, priority);
-    };
+    useEffect(() => {
+        const isLoaded = init();
+        if (isLoaded) 
+            setWorkState(WorkStates.FlashCards);
+    }, []);
 
-    function getFlashCard(entry) {
-        return <div className="flash-card">
-            
-        </div>   
-    }
+    async function startFlashCards() {
+        try {
+            await start(lastWordsLimit, count, dict.name, priority);
+            setWorkState(WorkStates.FlashCards);
+        } catch (e) {
+            console.log(e);
+        }
+    };
 
     return (
         <FlashCardContext.Provider value={{
+            dict, index, startFlashCards,
             priority, lastWordsLimit, count, timeLimit, saveScore,
             setPriority, setLastWordsLimit, setCount, setTimeLimit, setSaveScore
         }}>
@@ -68,19 +77,48 @@ function FlashCards( {dict} ) {
                 </div>
 
                 <div className="progress-bar-conteiner">
-                    <ProgressBar  now={parseInt((index / flashCards.length) * 100)}/>
+                    <ProgressBar now={parseInt((index / flashCards.length)*100 * (workState === WorkStates.FlashCards))}/>
                 </div>
 
                 <div className="main-body">
-                    {workState == WorkStates.LoadSettigs && 
-                        <div className="flash-card">
-                            <FlashCardSettings dict={dict}/>
-                        </div>
-                    }
+                    <div>
+                        {workState == WorkStates.LoadSettigs && 
+                            <div className="flash-card">
+                                <FlashCardSettings />
+                            </div>
+                        }
 
-                    {workState == WorkStates.FlashCards &&
-                        <div className=""></div>
-                    }
+                        {workState == WorkStates.FlashCards && showingIndex !== flashCards.length &&
+                            <FlashCard entry={flashCards[showingIndex]}/>
+                        }
+
+                        {workState == WorkStates.FlashCards && showingIndex === flashCards.length &&
+                            <div className="flash-card-body flash-card flash-card-ending">
+                                <h2>Congrats</h2>
+                                <p>You gone trough all the flashcards</p>
+                                <div>
+                                    <button className="flash-pack-btn" onClick={() => startFlashCards()}>Start again</button>
+                                    <button className="flash-pack-btn" onClick={() => setWorkState(WorkStates.LoadSettigs)}>Menu</button>
+                                </div>
+                            </div>
+                        }
+
+                        <div className="bottom-part-cards">
+                            <div></div>
+                            <div className={`row-display ${!(flashCards.length && workState == WorkStates.FlashCards) && "hide"}`} style={{width: "20%", gap: '20px'}}>
+                                <button className="st-btn" onClick={() => showPrevFlashCard()}>Prev</button>
+                                <p>{showingIndex+1}/{flashCards.length}</p>
+                                <button className="st-btn" onClick={() => showNextFlashCard()}>Next</button>
+                            </div>
+                            <div>
+                                {workState == WorkStates.FlashCards && 
+                                <Button variant="danger" onClick={() => {
+                                    finish();
+                                    setWorkState(WorkStates.LoadSettigs);
+                                }}>Finish</Button>}
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </FlashCardContext.Provider>

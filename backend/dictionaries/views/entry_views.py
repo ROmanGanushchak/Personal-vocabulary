@@ -31,7 +31,7 @@ class EntryGetView(APIView):
     @authorized
     @extract_inputs(["start"], ["count", "search", "searchType"])
     def post(self, request, start: int, count: int|None, search: str|None, searchType: int|None, name: str, by_lang: int) -> Response: # start
-        if (start < 0):
+        if (start < 0 or type(start) != int):
             return Response({"details": "uncorect index of word_pair"}, status=status.HTTP_400_BAD_REQUEST)
         if (count is None):
             count = request.user.profile.words_per_page

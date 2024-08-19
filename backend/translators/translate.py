@@ -67,7 +67,7 @@ class GoogleTranslator(Translator):
             target_language = language, 
             source_language = None if source_language == "none" else source_language
         )
-
+        
         if (source_language):
             return translated['translatedText'], source_language
         return (translated['translatedText'], Lang(translated['detectedSourceLanguage']).name)

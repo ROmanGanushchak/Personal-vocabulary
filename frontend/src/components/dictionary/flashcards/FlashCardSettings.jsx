@@ -15,8 +15,8 @@ export const TimePriorities = {
     None: 3
 };
 
-function FlashCardSettings( {dict} ) {
-    const {priority, lastWordsLimit, count, timeLimit, saveScore,
+function FlashCardSettings() {
+    const {priority, lastWordsLimit, count, timeLimit, saveScore, startFlashCards,
         setPriority, setLastWordsLimit, setCount, setTimeLimit, setSaveScore
     } = useContext(FlashCardContext);
 
@@ -49,7 +49,7 @@ function FlashCardSettings( {dict} ) {
             </div>
 
             <div className="down-part">
-                <Button style={{width: '100px'}}>Start</Button>
+                <Button style={{width: '100px'}} onClick={() => startFlashCards()}>Start</Button>
                 <button className="img-btn show-on-small" onClick={() => {setShowSettings(true)}}>
                     <img src={settingsIcon} alt="settings" width="30px" />
                 </button>

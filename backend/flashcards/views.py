@@ -17,7 +17,8 @@ from authentication.decorators import authorized
 
 class GetFlashCards(APIView):
     @authorized
-    def get(self, request, dictName: str, count: int, lastWordIndex: int):
+    def get(self, request, dictName: str, count: int, lastWordIndex: int | None):
+        print("In flashcards get method")
         try:
             dictionary: Dictionary = Dictionary.get(request.user.profile, dictName, False)
         except ObjectDoesNotExist:
@@ -30,7 +31,8 @@ class GetFlashCards(APIView):
             )
         )
 
-        row_numbered = row_numbered.filter(row_num__lte=lastWordIndex)
+        if (lastWordIndex != 0):
+            row_numbered = row_numbered.filter(row_num__lte=lastWordIndex)
 
         arr = row_numbered.annotate(
             t=ExpressionWrapper(
@@ -42,8 +44,9 @@ class GetFlashCards(APIView):
         chosen_elems = []
         i = 0
         while(i < len(arr) and len(chosen_elems) < count):
-            if (len(arr) - i <= count - len(chosen_elems) or randint(0, 1)):
+            if (len(arr) - i <= count - len(chosen_elems) or randint(0, 2) == 1):
                 chosen_elems.append(arr[i])
+            i += 1
         
         serializer = WriteEntrySerializer(chosen_elems, many=True)
         return Response(serializer.data)

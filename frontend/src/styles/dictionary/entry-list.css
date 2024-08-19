@@ -82,11 +82,6 @@
     position: relative;   
 }
 
-.hide {
-    opacity: 0;
-    pointer-events: none;
-}
-
 .full-hide {
     display: none;
 }

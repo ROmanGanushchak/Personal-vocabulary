@@ -50,15 +50,13 @@ class Dictionary(models.Model):
         else:
             return DictionaryGroup.objects.get(user=user).dictionaries.get(name=name)
 
-    def add_word_pair(self, ignore_copy: int, word: str, translates: str, note: str=None) -> list | None:
+    def add_word_pair(self, ignore_copy: int, word: str, translates: List[str], note: str=None) -> list | None:
         if (not ignore_copy):
             added_words = self.words.filter(word=word)
             if (added_words):
                 return added_words
 
         Entry.create(word = word, notes=note, dictionary = self, translates=translates)
-        self.words_count += 1
-        self.save()
         return None
     
     def add_entry(self, entry: Entry, type: int=0) -> bool: # type - 0 ignorecopy, 1-update_with new, 2-keep both 
@@ -88,6 +86,13 @@ class Dictionary(models.Model):
             case SortingTypes.AddingTimeReverse:
                 arr = words.order_by("-adding_time")[::-1]
             case SortingTypes.LeastQuased:
+                arr = words.annotate(
+                    num_difference=ExpressionWrapper(
+                        F('guessed_num') - F('guessing_attempts'), 
+                        output_field=IntegerField()
+                    )
+                ).order_by('num_difference')
+            case SortingTypes.LeastSpelled:
                 arr = words.annotate(
                     num_difference=ExpressionWrapper(
                         F('guessed_num') - F('guessing_attempts'), 
@@ -146,6 +151,11 @@ class Dictionary(models.Model):
                 raise Exception(f"Failed to set attribute {prop_name}")
         
         self.save()
+    
+    def recalculateWordsCount(self) -> int:
+        self.words_count = len(Entry.objects.filter(dictionary = self))
+        self.save()
+        return self.words_count
 
 
 class TranslationVarians(models.Model):
@@ -225,7 +235,7 @@ class Entry(models.Model):
         return super().delete(*args, **kwargs)
 
     @classmethod
-    def create(cls, word, translates, dictionary, notes=None):
+    def create(cls, word: str, translates: List[str], dictionary: Dictionary, notes=None):
         translation_varians = TranslationVarians()
         translation_varians.set_arr(translates)
 
@@ -241,4 +251,6 @@ class Entry(models.Model):
             )
         )
 
+        dictionary.words_count += 1
+        dictionary.save()
         return entry

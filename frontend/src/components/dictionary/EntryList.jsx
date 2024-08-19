@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useRef, useState } from "react";
-import useEntry, {entryExample, SearchTypes} from "../../hooks/useEntry";
+import useEntry, {SearchTypes} from "../../hooks/useEntry";
+import { entryExample } from "../../hooks/useEntryFabric";
 import EntryField from "./EntryField";
 import ChooseDictionaryModal from "./ChooseDictionaryModal";
 import useAudio from "../../hooks/useAudio";
@@ -71,7 +72,7 @@ function EntryList( {dict} ) {
                 </div>
 
                 <div className="extra-options col-display-r">
-                    <button onClick={() => navigate(`flashpacks`)} 
+                    <button onClick={() => navigate(`flashcards`)} 
                     className="flash-pack-btn" style={{width: '130px'}}>Flashcards</button>
                     <div className="row-display" style={{gap: '5px'}}>
                         <p className="word-per-page-header">Words count: </p>
